@@ -1,14 +1,18 @@
-#) Load packages
+#dMLA Bangladesh strains-------------------
+##Load packages--------
 library (ggplot2)
 library(dplyr)
 library(gridExtra)
 library(tidyr)
+library(seqinr)
 
-#2) Import all results (positive and negative included)
+##Formatting df------
+#Import results
 setwd("~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data")
 reads <- read.csv("20230725_sequencing_targets_all.csv", header = TRUE)
 reads
 
+#Assign barcodes to samples
 reads <- reads %>% 
   mutate(Sample = as.character(X1)) %>% 
   mutate(Sample = case_when(
@@ -57,16 +61,6 @@ reads <- reads %>%
     Sample_real == "AACACCT" ~ "HH17S_3", Sample_real == "AGCTGTA" ~ "HH18C_3", Sample_real == "GGTCTTG" ~ "HH18CH_3",Sample_real == "CCGACAT" ~ "HH18H_3",Sample_real == "TATCGTC" ~ "HH18S_3",
     Sample_real == "ATGGTTG" ~ "PCR_Neg"))
 
-ggplot(reads, aes(X2,X1, fill= n))+ 
-  geom_tile(colour="white")+
-  scale_fill_gradient(low = "white", high = "blue")+
-  theme(axis.text.x = element_text(size=5, angle=90))
-
-ggplot(reads, aes(X2,Sample_real, fill= n))+ 
-  geom_tile(colour="white")+
-  scale_fill_gradient(low = "white", high = "blue")+
-  theme(axis.text.x = element_text(size=5, angle=90))
-
 ##Calculate detection limit-----------------------
 # Create a reference dataframe with all levels of X2 present in the reads df
 reads <- subset(reads, Sample_real != "PCR_Neg") #Remove this samples because contamination occurred and I'm aware of it.
@@ -96,7 +90,7 @@ reads <- reads %>%
   mutate(real_n = ifelse(is.na(threshold), n, pmax(n - threshold, 0)))%>%
   select(-reads_mean, -reads_sd)
 
-#Plot
+##Plot results------------
 reads[reads == 0] <- NA
 
 #gradient - molecular counts
@@ -114,10 +108,156 @@ ggplot(complete(reads, X2, Sample_real), aes(X2, Sample_real)) +
   scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
   theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 6.5))
 
-# Export data
+## Export data--------
 write.csv(reads, file = "reads_counts.csv", row.names = FALSE)
 
+## Replicates analyses-----
+# Remove negative controls
+reads <- subset(reads, !(Sample_real %in% c("Negative1", "Negative2", "Negative3", "Negative4")))
+
+# Remove rows where real_n is NA
+reads <- subset(reads, !is.na(real_n))
+
+# Extract the common part of Sample_real names before the "_"
+reads <- reads %>%
+  mutate(Sample_name = sub("_.*", "", Sample_real))
+
+# Count the number of replicates for each Sample_name within each X2 group
+replicate_counts <- reads %>%
+  group_by(X2, Sample_name) %>%
+  summarise(replicate_count = n()) %>%
+  ungroup()
+
+### Targets present in all three replicates---------
+# Filter the data frame to keep only rows where all replicates are present for a unique X2
+tri_reads <- reads %>%
+  inner_join(replicate_counts, by = c("X2", "Sample_name")) %>%
+  group_by(X2) %>%
+  filter((replicate_count >= 3)) %>%
+  ungroup() %>%
+  select(X2, Sample_real, real_n)
+
+#Plot presence/absence
+ggplot(complete(tri_reads, X2, Sample_real), aes(X2, Sample_real)) +
+  geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "grey")), colour = "white") +
+  labs(title = "dMLA VFs/Phylo/ARGs n°3 - triplicates positive", x = "Genes Clusters", y = "Sample") +
+  scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
+  theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 6.5))
+
+### Targets present in two replicates---------
+# Filter the data frame to keep only rows where all replicates are present for a unique X2
+dup_reads <- reads %>%
+  inner_join(replicate_counts, by = c("X2", "Sample_name")) %>%
+  group_by(X2) %>%
+  filter((replicate_count >= 2)) %>%
+  ungroup() %>%
+  select(X2, Sample_real, real_n)
+
+#Plot presence/absence
+ggplot(complete(dup_reads, X2, Sample_real), aes(X2, Sample_real)) +
+  geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "black")), colour = "white") +
+  labs(title = "dMLA VFs/Phylo/ARGs n°3 - duplicates positive", x = "Genes Clusters", y = "Sample") +
+  scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
+  theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 6.5))
 
 
+##Blast 63 probes against samples--------
+### Define 63 probe sequences ------
+probe_sequences <- list(
+  mcr28 = "GTGAATTTGGCAAACTTTTCATCATATCGCTTAAAATACG",
+  mcr64 = "TTGTACTTATCTTCGTAGGTTTTCAACTTGGCAATCATCT",
+  aadA1 = "CGCTTAGCACCTCTGATAGTTGGTTCGAAATTTCGATGGT",
+  aadA21 = "TTCCATAGCGTTAAGGTTTCATTTAGCGCCTCAAATAGAT",
+  aadA57 = "CATCGATCGCAGATCCGAACAGGTGGATTGTGTCCAGTGT",
+  aac3II63 = "GCGGAGCGTAACGCGGCAACGACCGTCTCCGCTCCTCCTT",
+  aac3VI23 = "CACCAGCCACGCCGCATCGGGCCCGATCGCCGCCATCGAT",
+  aac6I6 = "AATGCCTGGCGTGTTTGAACCATGTACACGGCTGGACCAT",
+  aac6I123 = "TTGTTTTAGGGCGACTGCCCTGCTGCGTAACATCGTTGCT",
+  ant2Ia1 = "GGAGCCTCCGCGATTTCATACGCTTCGTCTGCCCACCAAG",
+  aph6I29 = "TCCGCTGCAATTTCGGTCGCCTGGTAGTCGCCGTGCTCGG",
+  aph3386 = "AATATTTTCACCTGAATCAGGATATTCTTCTAATACCTGG",
+  qnrB7 = "GACGTTCCAGGAGCAACGATGCCTGGTAGCTGTCCAGTTT",
+  qnrB35 = "CCGATAAATTCAGTGCCGCTCAGGTCGGCACCTGAAAAAT",
+  qnrS1 = "AGGTGAGATCACTTAAGTCTTTATGTGAAAAGTTGTGGTG",
+  ermB1 = "TTTGTTAGGGAATTGAAACTGTAGAATATCTTGGTGAATT",
+  mphA18 = "CGGAGAAATCTGGCCACGACGAATCGTCGTCGAGCCAGCG",
+  dfrA243 = "GGTAAATTTCTCCGCCACCAGACACTATAACGTGACCGGT",
+  dfrA369 = "TTGATAGCTCTTTCAAAGCATTTTCTATTGAAGGAAAAAC",
+  dfrA15 = "CAAAAGTCTTGCGTCCAACCAACAGCCATTGGTTATAGGT",
+  dfrA58 = "CCCGCCACCAGACACTATAACGTGATCGGTGAGTTCAGCC",
+  dfrA1 = "GAAAGACTAATACATTTTCATTTGAGCTTGAAATTCCTTT",
+  sul15 = "GCGGCGCAATACGTCTGATCTCATCGGCCGGCGATACAGG",
+  sul22 = "GAATGCATAACGACGAGTTTGGCAGATGATTTCGCCAATT",
+  sul336 = "GCCTAAAAAGAAGCCCATACCCGGATCAAGAATAATTCGT",
+  tetA13 = "AGCGCCGCCAGTGAGCCTTGCAGCTGCCCCTGACGTTCCT",
+  tetB43 = "AGCCAAGGAGCAAAGATAACCTGCATTAACGCATAAAGTG",
+  tetM34 = "AAAACTAAGATATGGCTCTAACAATTCTGTTCCAGCTTTT",
+  intI125 = "GGTTACGACATTCGAACCGTGCAGGATCTGCTCGGCCATT",
+  uidA160 = "CGAAGCGGGTAGATATCACACTCTGTCTGGCTTTTGGCTG",
+  uidA616 = "ACAACGAACTGAACTGGCAGACTATCCCGCCGGGAATGGT",
+  gadph195 = "ACGTTGTTGCTGAAGCAACCGGTATCTTCCTGACCGACGA",
+  astA13 = "GTTGCGCACCATATGCACGATGCATAACTGGATGCGGGCC",
+  aatA22 = "ATTTTTGCTTCATAAGCCGATAGAAGATTATAGGATAATG",
+  aatA12314 = "AAGTCCATTTCTGCCAGTGTAATTCCCTCCGACAGTCAGT",
+  ipaH321 = "GCAGTGCGGAGGTCATTTGCTGTCACTCCCGACACGCCAT",
+  ipaH921 = "GCAATACCTCCGGATTCCGTGAACAGGTCGCTGCATGGCT",
+  eae111 = "CAGTACCATTAATATCATGCGGAATATTCAGAGAAAGAAT",
+  eae6271 = "AAATCCTGATCAATGAAGACGTTATAGCCCAGCATATTTT",
+  stx2181 = "ACTCCATTAACGCCAGATATGATGAAACCAGTGAGTGACG",
+  stx23291 = "GAGCACTTTGCAGTAACGGTTGCAGATTCCAGCGACTGGT",
+  aggR11 = "TATTGCTTCCTTCTTTTGTGTATACATCGATTGTACAATT",
+  stx1301 = "GATCAACATCTTCAGCAGTCATTACATAAGAACGCCCACT",
+  stx11581 = "TAAAGGTATCGTCATCATTATATTTTGTATACTCCACCTT",
+  bfpA82 = "GCCCAATATACAGACCATTAATTGCAGACGTTGCGCTCAT",
+  invE132 = "TGAAGAATATTGGCAGGAAGAATTGTTAATGGCGTTACGT",
+  eltA73 = "TAACGCAGAAACCTCCTGTTCATATGGGTGAGGGCTGTAT",
+  eltA4510 = "GTCAGATATGATGACGGATATGTTTCCACTTCTCTTAGTT",
+  eltB12 = "GTTTTTATTATTCCATACACATAATTTATCAATTTTGGTCT",
+  eltB2318 = "CAGAACTATGTTCGGAATATCGCAACACACAAATATATAC",
+  estIa94 = "GTGTTGTTCATATTTTCTGATTTTTTTTCACTGTTGTTTT",
+  estIa1515 = "GTAAAATGTGTTATTCATATTTTCTGATTTTTTTTCACTG",
+  bfpF56 = "GATACCTTTCGCGTCAGCGCCGTAACTTCCTTGTGCAGGT",
+  bfpF105 = "ATATCTTGGATTATAACGCATCGCTGAAATCATTGCATTT",
+  aafA83 = "ACTTGATAATAAAGTAGCAATAACAAACATTCTGATTTTT",
+  aap223 = "GACAGACACCCCCCTTACTTTCCCTTCATTAAGGCCTTGC",
+  aaiC17 = "AAAGTAGTCACCACTGTTTTCAACTTTTGAATTTCCCTTT",
+  aaiC47 = "TTTTTAAGAGAGGTGAAAAAGAAGTTAAAATAGAAATTTT",
+  arpA19 = "CAAAAGATAAAAATGGTTTTTCTGGATTATTTTTAGCGAT",
+  chuA24 = "CTCACCGCCATATGTCAGTAAGTGAGAAGCGAAACTGTCG",
+  trpA354 = "CAAAGAAGGCGCATTCGTTCCTTTCGTCACCCTCGGTGAT",
+  Tsp19 = "GCGTTTCTGTCTCACCCGCAAGGACAGCGCTGGCGATATA",
+  yjaA12 = "AACCGCCCTCATTCATTTCCAGCGCGCTCACAACAATATC"
+)
 
+
+###HH03C------
+HH03C <- read.fasta(file = "~/switchdrive/Institution/dMLA/VFs-Cassette/Strains_WGS_Bangladesh/HH03Ccontigs.fasta")
+
+# Initialize a matrix to store probe presence information
+probe_presence_HH03C <- matrix(0, nrow = length(HH03C), ncol = length(probe_sequences))
+
+# Loop through each node in the WGS data
+for (i in 1:length(HH03C)) {
+  # Extract the node sequence
+  node_sequence <- as.character(HH03C[[i]])
+  
+  # Run sequence matching for each probe against the current node
+  for (probe_name in names(probe_sequences)) {
+    probe_sequence <- as.character(probe_sequences[[probe_name]])
+    
+    # Compute Levenshtein (edit) distance between probe and node sequence
+    distance <- adist(probe_sequence, node_sequence)
+    
+    # Check if the minimum edit distance is less than or equal to a threshold
+    if (min(distance) <= 0) {
+      # Mark the presence of the probe for the current node
+      probe_index <- as.numeric(gsub("Probe", "", probe_name))
+      probe_presence_HH03C[i, probe_index] <- 1
+      # Additional processing logic can be added here if needed
+    }
+  }
+}
+
+# View the probe presence matrix
+print(probe_presence_HH03C)
 
