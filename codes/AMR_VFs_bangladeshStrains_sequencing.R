@@ -3,6 +3,7 @@
 library (ggplot2)
 library(dplyr)
 library(gridExtra)
+library(ggpubr)
 library(tidyr)
 library(seqinr)
 
@@ -140,7 +141,7 @@ tri_reads <- reads %>%
 #Plot presence/absence
 tri=ggplot(complete(tri_reads, X2, Sample_real), aes(X2, Sample_real)) +
   geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "black")), colour = "white") +
-  labs(title = "Triplicates positive only", x = "Genes Clusters", y = "Sample") +
+  labs(title = "Triplicates positive only", x = "Target genes", y = "Sample") +
   scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
   theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 6.5))
 
@@ -156,7 +157,7 @@ dup_reads <- reads %>%
 #Plot presence/absence
 dup=ggplot(complete(dup_reads, X2, Sample_real), aes(X2, Sample_real)) +
   geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "black")), colour = "white") +
-  labs(title = "Duplicates positive only", x = "Genes Clusters", y = "Sample") +
+  labs(title = "Duplicates positive only", x = "Target genes", y = "Sample") +
   scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
   theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 6.5))
 
