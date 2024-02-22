@@ -10,7 +10,7 @@ library(seqinr)
 ##Formatting df------
 #Import results
 setwd("~/Desktop/dmla-amr-vfs/data")
-reads <- read.csv("20230725_sequencing_targets_all.csv", header = TRUE)
+reads <- read.csv("20230725_sequencing_targets_all_noPCRneg.csv", header = TRUE)
 reads
 
 #Assign barcodes to samples
@@ -105,9 +105,48 @@ ggplot(complete(reads, X2, Sample_real), aes(X2,Sample_real, fill= real_n))+
 #unique colour - presence/absence
 all=ggplot(complete(reads, X2, Sample_real), aes(X2, Sample_real)) +
   geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "black")), colour = "white") +
-  labs(title="All positive", x = "Target genes", y = "Sample") +
+  labs(title="Multiplex-testing on E. coli - All positive", x = "Target genes", y = "Sample") +
   scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
-  theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 6.5))
+  theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 5))
+
+#< 1
+ggplot(complete(reads, X2, Sample_real), aes(X2, Sample_real)) +
+  geom_tile(aes(fill = case_when(
+    is.na(real_n) ~ "gray95",
+    real_n > 0 & real_n <= 1 ~ "red", # Assuming you want to include 1 in the range
+    TRUE ~ "black"
+  )), colour = "white") +
+  labs(title = "Multiplex-testing - Tube 2", x = "Probe-pair", y = "Sample") +
+  scale_fill_manual(values = c("gray95" = "gray95", "black" = "black", "red" = "red"), guide = "none") +
+  theme(axis.text.x = element_text(size = 8, angle = 90), 
+        axis.text.y = element_text(size = 6.5))
+
+#<100
+ggplot(complete(reads, X2, Sample_real), aes(X2, Sample_real)) +
+  geom_tile(aes(fill = case_when(
+    is.na(real_n) ~ "gray95",
+    real_n > 0 & real_n <= 1 ~ "red", 
+    real_n > 1 & real_n <= 100 ~ "darkorange",  # Assuming you want to include 1 in the range
+    TRUE ~ "black"
+  )), colour = "white") +
+  labs(title = "Multiplex-testing - Tube 2", x = "Probe-pair", y = "Sample") +
+  scale_fill_manual(values = c("gray95" = "gray95", "black" = "black", "red" = "red", "darkorange"="darkorange"), guide = "none") +
+  theme(axis.text.x = element_text(size = 8, angle = 90), 
+        axis.text.y = element_text(size = 6.5))
+
+#<1000
+ggplot(complete(reads, X2, Sample_real), aes(X2, Sample_real)) +
+  geom_tile(aes(fill = case_when(
+    is.na(real_n) ~ "gray95",
+    real_n > 0 & real_n <= 1 ~ "red", 
+    real_n > 1 & real_n <= 100 ~ "darkorange",
+    real_n > 100 & real_n <= 1000 ~ "gold1",# Assuming you want to include 1 in the range
+    TRUE ~ "black"
+  )), colour = "white") +
+  labs(title = "Multiplex-testing - Tube 2", x = "Probe-pair", y = "Sample") +
+  scale_fill_manual(values = c("gray95" = "gray95", "black" = "black", "red" = "red", "darkorange"="darkorange", "gold1"="gold1"), guide = "none") +
+  theme(axis.text.x = element_text(size = 8, angle = 90), 
+        axis.text.y = element_text(size = 6.5))
 
 ## Export data--------
 write.csv(reads, file = "reads_counts.csv", row.names = FALSE)
@@ -141,9 +180,23 @@ tri_reads <- reads %>%
 #Plot presence/absence
 tri=ggplot(complete(tri_reads, X2, Sample_real), aes(X2, Sample_real)) +
   geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "black")), colour = "white") +
-  labs(title = "Triplicates positive only", x = "Target genes", y = "Sample") +
+  labs(title = "Multiplex-testing on E. coli - Triplicates positive only", x = "Target genes", y = "Sample") +
   scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
-  theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 6.5))
+  theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 5))
+
+#<1000
+ggplot(complete(tri_reads, X2, Sample_real), aes(X2, Sample_real)) +
+  geom_tile(aes(fill = case_when(
+    is.na(real_n) ~ "gray95",
+    real_n > 0 & real_n <= 1 ~ "red", 
+    real_n > 1 & real_n <= 100 ~ "darkorange",
+    real_n > 100 & real_n <= 1000 ~ "gold1",# Assuming you want to include 1 in the range
+    TRUE ~ "black"
+  )), colour = "white") +
+  labs(title = "Multiplex-testing on E. coli - Triplicates positive only", x = "Probe-pair", y = "Sample") +
+  scale_fill_manual(values = c("gray95" = "gray95", "black" = "black", "red" = "red", "darkorange"="darkorange", "gold1"="gold1"), guide = "none") +
+  theme(axis.text.x = element_text(size = 8, angle = 90), 
+        axis.text.y = element_text(size = 5))
 
 ### Targets present in two replicates---------
 # Filter the data frame to keep only rows where all replicates are present for a unique X2
@@ -157,9 +210,9 @@ dup_reads <- reads %>%
 #Plot presence/absence
 dup=ggplot(complete(dup_reads, X2, Sample_real), aes(X2, Sample_real)) +
   geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "black")), colour = "white") +
-  labs(title = "Duplicates positive only", x = "Target genes", y = "Sample") +
+  labs(title = "Multiplex-testing on E. coli - Duplicates positive only", x = "Target genes", y = "Sample") +
   scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
-  theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 6.5))
+  theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 5))
 
 
 ##Blast 63 probes against samples--------
