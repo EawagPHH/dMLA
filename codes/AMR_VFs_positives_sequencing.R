@@ -1,4 +1,4 @@
-#dMLA Bangladesh strains-------------------
+#dMLA Positive Templates-------------------
 ##Load packages--------
 library (ggplot2)
 library(dplyr)
