@@ -1,4 +1,4 @@
-#dMLA Bangladesh strains-------------------
+#dMLA Positive Templates-------------------
 ##Load packages--------
 library (ggplot2)
 library(dplyr)
@@ -98,18 +98,14 @@ reads[reads == 0] <- NA
 ggplot(complete(reads, X2, Sample_real), aes(X2,Sample_real, fill= real_n))+ 
   geom_tile(colour="white")+
   labs(title="dMLA VFs/Phylo/ARGs Replicate n°3",
-       x ="Target genes", y = "Sample")+
+       x ="Genes Clusters", y = "Sample")+
   scale_fill_gradient(low = "lightblue", high = "blue", na.value = "gray95",  name ='Molecular counts')+
   theme(axis.text.x = element_text(size=8, angle=90), axis.text.y = element_text(size=6.5))
 
 #unique colour - presence/absence
 all=ggplot(complete(reads, X2, Sample_real), aes(X2, Sample_real)) +
   geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "black")), colour = "white") +
-<<<<<<< HEAD
-  labs(title="All positive", x = "Target genes", y = "Sample") +
-=======
   labs(title="Multiplex-testing on E. coli - All positive", x = "Target genes", y = "Sample") +
->>>>>>> 1ccb192b2242456c1d62987466e7c8da01d50b9f
   scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
   theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 5))
 
@@ -181,15 +177,10 @@ tri_reads <- reads %>%
   ungroup() %>%
   dplyr::select(X2, Sample_real, real_n)
 
-
 #Plot presence/absence
 tri=ggplot(complete(tri_reads, X2, Sample_real), aes(X2, Sample_real)) +
   geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "black")), colour = "white") +
-<<<<<<< HEAD
-  labs(title = "Triplicates positive only", x = "Genes Clusters", y = "Sample") +
-=======
   labs(title = "Multiplex-testing on E. coli - Triplicates positive only", x = "Target genes", y = "Sample") +
->>>>>>> 1ccb192b2242456c1d62987466e7c8da01d50b9f
   scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
   theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 5))
 
@@ -219,11 +210,7 @@ dup_reads <- reads %>%
 #Plot presence/absence
 dup=ggplot(complete(dup_reads, X2, Sample_real), aes(X2, Sample_real)) +
   geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "black")), colour = "white") +
-<<<<<<< HEAD
-  labs(title = "Duplicates positive only", x = "Genes Clusters", y = "Sample") +
-=======
   labs(title = "Multiplex-testing on E. coli - Duplicates positive only", x = "Target genes", y = "Sample") +
->>>>>>> 1ccb192b2242456c1d62987466e7c8da01d50b9f
   scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
   theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 5))
 
