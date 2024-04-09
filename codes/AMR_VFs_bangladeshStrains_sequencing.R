@@ -97,14 +97,14 @@ reads[reads == 0] <- NA
 ggplot(complete(reads, X2, Sample_real), aes(X2,Sample_real, fill= real_n))+ 
   geom_tile(colour="white")+
   labs(title="dMLA VFs/Phylo/ARGs Replicate n°3",
-       x ="Genes Clusters", y = "Sample")+
+       x ="Target genes", y = "Sample")+
   scale_fill_gradient(low = "lightblue", high = "blue", na.value = "gray95",  name ='Molecular counts')+
   theme(axis.text.x = element_text(size=8, angle=90), axis.text.y = element_text(size=6.5))
 
 #unique colour - presence/absence
-ggplot(complete(reads, X2, Sample_real), aes(X2, Sample_real)) +
+all=ggplot(complete(reads, X2, Sample_real), aes(X2, Sample_real)) +
   geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "black")), colour = "white") +
-  labs(title = "dMLA VFs/Phylo/ARGs n°3", x = "Genes Clusters", y = "Sample") +
+  labs(title="All positive", x = "Target genes", y = "Sample") +
   scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
   theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 6.5))
 
@@ -137,10 +137,11 @@ tri_reads <- reads %>%
   ungroup() %>%
   select(X2, Sample_real, real_n)
 
+
 #Plot presence/absence
-ggplot(complete(tri_reads, X2, Sample_real), aes(X2, Sample_real)) +
-  geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "grey")), colour = "white") +
-  labs(title = "dMLA VFs/Phylo/ARGs n°3 - triplicates positive", x = "Genes Clusters", y = "Sample") +
+tri=ggplot(complete(tri_reads, X2, Sample_real), aes(X2, Sample_real)) +
+  geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "black")), colour = "white") +
+  labs(title = "Triplicates positive only", x = "Genes Clusters", y = "Sample") +
   scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
   theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 6.5))
 
@@ -154,9 +155,9 @@ dup_reads <- reads %>%
   select(X2, Sample_real, real_n)
 
 #Plot presence/absence
-ggplot(complete(dup_reads, X2, Sample_real), aes(X2, Sample_real)) +
+dup=ggplot(complete(dup_reads, X2, Sample_real), aes(X2, Sample_real)) +
   geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "black")), colour = "white") +
-  labs(title = "dMLA VFs/Phylo/ARGs n°3 - duplicates positive", x = "Genes Clusters", y = "Sample") +
+  labs(title = "Duplicates positive only", x = "Genes Clusters", y = "Sample") +
   scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
   theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 6.5))
 
