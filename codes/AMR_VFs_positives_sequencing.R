@@ -41,6 +41,39 @@ reads1 <- reads1 %>%
     Sample_real == "GAATCGA" ~ "arpA19", Sample_real == "CTACGTT" ~ "chuA24", Sample_real == "GTTTCGG" ~ "trpA354",
     Sample_real == "GCAAATG" ~ "Tsp19",Sample_real == "CTGACAC" ~ "yjaA12", Sample_real == "GCACTTT" ~ "zPCR_neg"))
 
+#Plot results
+#r1a=ggplot(complete(reads1, X2, Sample_real), aes(X2, Sample_real)) +
+ # geom_tile(aes(fill = case_when(
+#   is.na(n) ~ "n = 0",
+#   n > 0 & n <= 1 ~ "0 > n ≤ 1", 
+#   n > 1 & n <= 10 ~ "1 > n ≤ 10",
+#   n > 10 & n <= 100 ~ "10 > n ≤ 100",
+#   n > 100 & n <= 1000 ~ "100 > n ≤ 1000",# Assuming you want to include 1 in the range
+#   TRUE ~ "n > 1000"
+# )), colour = "white") +
+# labs(title = "Replicate 1", x = "Probe-pair", y = "Sample", fill = "Reads counts") +
+# scale_fill_manual(values = c("n = 0" = "gray95", "0 > n ≤ 1" = "yellowgreen", "1 > n ≤ 10"="yellow2","10 > n ≤ 100"="goldenrod1", 
+#                              "100 > n ≤ 1000"="tomato1", "n > 1000" = "black"),
+#                   limits = c("n = 0", "0 > n ≤ 1", "1 > n ≤ 10", "10 > n ≤ 100", "100 > n ≤ 1000", "n > 1000")) +
+# theme(axis.text.x = element_text(size = 8, angle = 90), 
+#       axis.text.y = element_text(size = 6.5))
+
+# Plot results
+r1a=ggplot(complete(reads1, X2, Sample_real), aes(X2, Sample_real, fill = log10(n))) +
+  geom_tile(colour = "white") +
+  labs(title = "Before Filter - Replicate 1",
+       x = "Probe-pair", y = "Sample") +
+  scale_fill_gradient2(low = "yellowgreen", mid = "red", high = "black", midpoint = log10(1000),
+                       na.value = "gray95", name = "Reads counts",
+                       breaks = log10(c(1, 10, 100, 1000, 10000, 100000)),
+                       labels = c("1", "10", "100", "1'000", "10'000", "100'000")) +
+  theme(axis.text.x = element_text(size=7, angle=45, color = "black", hjust = 1),
+        axis.text.y = element_text(size=7, angle=-25, color = "black", vjust = 1),
+        axis.title.x = element_text(size=12), 
+        axis.title.y = element_text(size=12),
+        title=element_text(size=13))
+
+
 #Distribution of reads1------------------
 ##Filter of rows whit positive
 filtered_reads1 <- reads1 %>% 
@@ -81,21 +114,35 @@ reads1 <- reads1 %>%
 reads1[reads1 == 0] <- NA
 
 #Plot results
-r1=ggplot(complete(reads1, X2, Sample_real), aes(X2, Sample_real)) +
-  geom_tile(aes(fill = case_when(
-    is.na(real_n) ~ "n = 0",
-    real_n > 0 & real_n <= 1 ~ "0 > n ≤ 1", 
-    real_n > 1 & real_n <= 10 ~ "1 > n ≤ 10",
-    real_n > 10 & real_n <= 100 ~ "10 > n ≤ 100",
-    real_n > 100 & real_n <= 1000 ~ "100 > n ≤ 1000",# Assuming you want to include 1 in the range
-    TRUE ~ "n > 1000"
-  )), colour = "white") +
-  labs(title = "Replicate 1", x = "Probe-pair", y = "Sample", fill = "Reads counts") +
-  scale_fill_manual(values = c("n = 0" = "gray95", "0 > n ≤ 1" = "yellowgreen", "1 > n ≤ 10"="yellow2","10 > n ≤ 100"="goldenrod1", 
-                               "100 > n ≤ 1000"="tomato1", "n > 1000" = "black"),
-                    limits = c("n = 0", "0 > n ≤ 1", "1 > n ≤ 10", "10 > n ≤ 100", "100 > n ≤ 1000", "n > 1000")) +
-  theme(axis.text.x = element_text(size = 8, angle = 90), 
-        axis.text.y = element_text(size = 6.5))
+#r1=ggplot(complete(reads1, X2, Sample_real), aes(X2, Sample_real)) +
+# geom_tile(aes(fill = case_when(
+#   is.na(real_n) ~ "n = 0",
+#   real_n > 0 & real_n <= 1 ~ "0 > n ≤ 1", 
+#   real_n > 1 & real_n <= 10 ~ "1 > n ≤ 10",
+#   real_n > 10 & real_n <= 100 ~ "10 > n ≤ 100",
+#   real_n > 100 & real_n <= 1000 ~ "100 > n ≤ 1000",# Assuming you want to include 1 in the range
+#   TRUE ~ "n > 1000"
+# )), colour = "white") +
+# labs(title = "Replicate 1", x = "Probe-pair", y = "Sample", fill = "Reads counts") +
+# scale_fill_manual(values = c("n = 0" = "gray95", "0 > n ≤ 1" = "yellowgreen", "1 > n ≤ 10"="yellow2","10 > n ≤ 100"="goldenrod1", 
+#                              "100 > n ≤ 1000"="tomato1", "n > 1000" = "black"),
+#                   limits = c("n = 0", "0 > n ≤ 1", "1 > n ≤ 10", "10 > n ≤ 100", "100 > n ≤ 1000", "n > 1000")) +
+# theme(axis.text.x = element_text(size = 8, angle = 90), 
+#       axis.text.y = element_text(size = 6.5))
+
+r1=ggplot(complete(reads1, X2, Sample_real), aes(X2, Sample_real, fill = log10(real_n))) +
+  geom_tile(colour = "white") +
+  labs(title = "After Filter - Replicate 1",
+       x = "Probe-pair", y = "Sample") +
+  scale_fill_gradient2(low = "yellowgreen", mid = "red", high = "black", midpoint = log10(1000),
+                       na.value = "gray95", name = "Reads counts",
+                       breaks = log10(c(1, 10, 100, 1000, 10000, 100000)),
+                       labels = c("1", "10", "100", "1'000", "10'000", "100'000")) +
+  theme(axis.text.x = element_text(size=7, angle=45, color = "black", hjust = 1),
+        axis.text.y = element_text(size=7, angle=-25, color = "black", vjust = 1),
+        axis.title.x = element_text(size=12), 
+        axis.title.y = element_text(size=12),
+        title=element_text(size=13))
 
 #write.csv(reads1, "~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data/adjusted_reads1.csv")
 
@@ -131,6 +178,37 @@ reads2 <- reads2 %>%
     Sample_real == "GCAACGA" ~ "zNegative8",Sample_real == "GCCATAC" ~ "uidA616",Sample_real == "TACCTTC" ~ "gadph195",
     Sample_real == "GAATCGA" ~ "arpA19", Sample_real == "CTACGTT" ~ "chuA24", Sample_real == "GTTTCGG" ~ "trpA354",
     Sample_real == "GCAAATG" ~ "Tsp19",Sample_real == "CTGACAC" ~ "yjaA12", Sample_real == "GCACTTT" ~ "zPCR_neg"))
+
+#Plot results
+#r2a=ggplot(complete(reads2, X2, Sample_real), aes(X2, Sample_real)) +
+# geom_tile(aes(fill = case_when(
+#   is.na(n) ~ "n = 0",
+#   n > 0 & n <= 1 ~ "0 > n ≤ 1", 
+#   n > 1 & n <= 10 ~ "1 > n ≤ 10",
+#   n > 10 & n <= 100 ~ "10 > n ≤ 100",
+#   n > 100 & n <= 1000 ~ "100 > n ≤ 1000",# Assuming you want to include 1 in the range
+#   TRUE ~ "n > 1000"
+# )), colour = "white") +
+# labs(title = "Replicate 2", x = "Probe-pair", y = "Sample", fill = "Reads counts") +
+# scale_fill_manual(values = c("n = 0" = "gray95", "0 > n ≤ 1" = "yellowgreen", "1 > n ≤ 10"="yellow2","10 > n ≤ 100"="goldenrod1", 
+#                              "100 > n ≤ 1000"="tomato1", "n > 1000" = "black"),
+#                   limits = c("n = 0", "0 > n ≤ 1", "1 > n ≤ 10", "10 > n ≤ 100", "100 > n ≤ 1000", "n > 1000")) +
+# theme(axis.text.x = element_text(size = 8, angle = 90), 
+#       axis.text.y = element_text(size = 6.5))
+
+r2a=ggplot(complete(reads2, X2, Sample_real), aes(X2, Sample_real, fill = log10(n))) +
+  geom_tile(colour = "white") +
+  labs(title = "Before Filter - Replicate 2",
+       x = "Probe-pair", y = "Sample") +
+  scale_fill_gradient2(low = "yellowgreen", mid = "red", high = "black", midpoint = log10(1000),
+                       na.value = "gray95", name = "Reads counts",
+                       breaks = log10(c(1, 10, 100, 1000, 10000, 100000)),
+                       labels = c("1", "10", "100", "1'000", "10'000", "100'000")) +
+  theme(axis.text.x = element_text(size=7, angle=45, color = "black", hjust = 1),
+        axis.text.y = element_text(size=7, angle=-25, color = "black", vjust = 1),
+        axis.title.x = element_text(size=12), 
+        axis.title.y = element_text(size=12),
+        title=element_text(size=13))
 
 #Distribution of reads2------------------
 ##Filter of rows whit positive
@@ -175,25 +253,40 @@ reads2 <- reads2 %>%
 reads2[reads2 == 0] <- NA
 
 #Plot results
-r2=ggplot(complete(reads2, X2, Sample_real), aes(X2, Sample_real)) +
-  geom_tile(aes(fill = case_when(
-    is.na(real_n) ~ "n = 0",
-    real_n > 0 & real_n <= 1 ~ "0 > n ≤ 1", 
-    real_n > 1 & real_n <= 10 ~ "1 > n ≤ 10",
-    real_n > 10 & real_n <= 100 ~ "10 > n ≤ 100",
-    real_n > 100 & real_n <= 1000 ~ "100 > n ≤ 1000",# Assuming you want to include 1 in the range
-    TRUE ~ "n > 1000"
-  )), colour = "white") +
-  labs(title = "Replicate 2", x = "Probe-pair", y = "Sample", fill = "Reads counts") +
-  scale_fill_manual(values = c("n = 0" = "gray95", "0 > n ≤ 1" = "yellowgreen", "1 > n ≤ 10"="yellow2","10 > n ≤ 100"="goldenrod1", 
-                               "100 > n ≤ 1000"="tomato1", "n > 1000" = "black"),
-                    limits = c("n = 0", "0 > n ≤ 1", "1 > n ≤ 10", "10 > n ≤ 100", "100 > n ≤ 1000", "n > 1000")) +
-  theme(axis.text.x = element_text(size = 8, angle = 90), 
-        axis.text.y = element_text(size = 6.5))
+#r2=ggplot(complete(reads2, X2, Sample_real), aes(X2, Sample_real)) +
+# geom_tile(aes(fill = case_when(
+#   is.na(real_n) ~ "n = 0",
+#   real_n > 0 & real_n <= 1 ~ "0 > n ≤ 1", 
+#   real_n > 1 & real_n <= 10 ~ "1 > n ≤ 10",
+#   real_n > 10 & real_n <= 100 ~ "10 > n ≤ 100",
+#   real_n > 100 & real_n <= 1000 ~ "100 > n ≤ 1000",# Assuming you want to include 1 in the range
+#   TRUE ~ "n > 1000"
+# )), colour = "white") +
+# labs(title = "Replicate 2", x = "Probe-pair", y = "Sample", fill = "Reads counts") +
+# scale_fill_manual(values = c("n = 0" = "gray95", "0 > n ≤ 1" = "yellowgreen", "1 > n ≤ 10"="yellow2","10 > n ≤ 100"="goldenrod1", 
+#                              "100 > n ≤ 1000"="tomato1", "n > 1000" = "black"),
+#                   limits = c("n = 0", "0 > n ≤ 1", "1 > n ≤ 10", "10 > n ≤ 100", "100 > n ≤ 1000", "n > 1000")) +
+# theme(axis.text.x = element_text(size = 8, angle = 90), 
+#       axis.text.y = element_text(size = 6.5))
+
+r2=ggplot(complete(reads2, X2, Sample_real), aes(X2, Sample_real, fill = log10(real_n))) +
+  geom_tile(colour = "white") +
+  labs(title = "After Filter - Replicate 2",
+       x = "Probe-pair", y = "Sample") +
+  scale_fill_gradient2(low = "yellowgreen", mid = "red", high = "black", midpoint = log10(1000),
+                       na.value = "gray95", name = "Reads counts",
+                       breaks = log10(c(1, 10, 100, 1000, 10000, 100000)),
+                       labels = c("1", "10", "100", "1'000", "10'000", "100'000")) +
+  theme(axis.text.x = element_text(size=7, angle=45, color = "black", hjust = 1),
+        axis.text.y = element_text(size=7, angle=-25, color = "black", vjust = 1),
+        axis.title.x = element_text(size=12), 
+        axis.title.y = element_text(size=12),
+        title=element_text(size=13))
 
 #write.csv(reads2, "~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data/adjusted_reads2.csv")
 
-ggarrange(r1, r2, ncol=2, labels=c("A", "B"), common.legend = TRUE, legend = "right")
+
+ggarrange(r1a, r2a,r1, r2, ncol=2, nrow=2, labels=c("A", "B", "C", "D"), common.legend = TRUE, legend = "right")
 
 ##Adjusted reads counts of positive
 #Import results
@@ -209,6 +302,27 @@ pcounts_long <- pcounts %>%
     values_to = "Counts",
     names_prefix = "Reads.counts."
   )
+
+# Calculate mean counts per sample across replicates
+mean_counts <- pcounts_long %>%
+  group_by(Sample) %>%
+  summarize(MeanCounts = mean(Counts)) %>%
+  arrange(desc(MeanCounts))
+
+# Reorder 'Sample' factor levels based on mean counts
+pcounts_long$Sample <- factor(pcounts_long$Sample, levels = mean_counts$Sample)
+pcounts_long$Replicate = as.factor(pcounts_long$Replicate)
+
+# Plotting
+ggplot(pcounts_long, aes(x = Sample, y = Counts, fill = Replicate)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9), width = 0.8) +
+  geom_point(data = mean_counts, aes(x = Sample, y = MeanCounts, color = "Mean"), inherit.aes = FALSE, size = 3) +
+  scale_fill_manual(values = c("tan2", "steelblue3"), labels = c("Replicate 1", "Replicate 2")) +
+  scale_color_manual(values = c("Mean" = "black"), labels = c("Mean")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.title = element_blank()) +
+  labs(x = "Sample", y = "Filtered Reads Counts")
+
+
 
 # Order the samples based on the counts from Replicate 1
 replicate2_order <- pcounts_long %>%
