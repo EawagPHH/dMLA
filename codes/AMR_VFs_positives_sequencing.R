@@ -97,7 +97,7 @@ r1=ggplot(complete(reads1, X2, Sample_real), aes(X2, Sample_real)) +
   theme(axis.text.x = element_text(size = 8, angle = 90), 
         axis.text.y = element_text(size = 6.5))
 
-
+#write.csv(reads1, "~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data/adjusted_reads1.csv")
 
 #Import results tube 2
 setwd("~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data")
@@ -191,4 +191,45 @@ r2=ggplot(complete(reads2, X2, Sample_real), aes(X2, Sample_real)) +
   theme(axis.text.x = element_text(size = 8, angle = 90), 
         axis.text.y = element_text(size = 6.5))
 
+#write.csv(reads2, "~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data/adjusted_reads2.csv")
+
 ggarrange(r1, r2, ncol=2, labels=c("A", "B"), common.legend = TRUE, legend = "right")
+
+##Adjusted reads counts of positive
+#Import results
+setwd("~/switchdrive/Institution/Manuscripts/02_dMLA/tables")
+pcounts <- read.csv("20240415_adjusted_reads_positive.csv", header = TRUE)
+pcounts
+
+# Reshape the data to long format
+pcounts_long <- pcounts %>% 
+  pivot_longer(
+    cols = starts_with("Reads"),
+    names_to = "Replicate",
+    values_to = "Counts",
+    names_prefix = "Reads.counts."
+  )
+
+# Order the samples based on the counts from Replicate 1
+replicate2_order <- pcounts_long %>%
+  filter(Replicate == "replicate.2") %>%  # Adjust this if your column values are different
+  arrange(desc(Counts)) %>%
+  pull(Sample)
+
+# Step 2: Convert 'Sample' into a factor with levels ordered as desired
+pcounts_long$Sample <- factor(pcounts_long$Sample, levels = replicate2_order)
+
+
+ggplot(pcounts_long, aes(x = Sample, y = Counts, fill = Replicate)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  scale_fill_manual(values = c("orange", "blue"), 
+                    labels = c("Replicate 1", "Replicate 2")) + # Modify legend labels here
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),  # Rotate x-axis labels for better visibility
+        legend.title = element_blank()) +  # Optional: remove legend title if desired
+  labs(x = "Sample", y = "Adjusted Reads Counts")
+
+
+
+
+
+
