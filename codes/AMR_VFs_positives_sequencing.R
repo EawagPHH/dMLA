@@ -314,15 +314,18 @@ pcounts_long$Sample <- factor(pcounts_long$Sample, levels = mean_counts$Sample)
 pcounts_long$Replicate = as.factor(pcounts_long$Replicate)
 
 # Plotting
-ggplot(pcounts_long, aes(x = Sample, y = Counts, fill = Replicate)) +
+ggplot(pcounts_long, aes(x = Sample, y = log10(Counts), fill = Replicate)) +
   geom_bar(stat = "identity", position = position_dodge(width = 0.9), width = 0.8) +
-  geom_point(data = mean_counts, aes(x = Sample, y = MeanCounts, color = "Mean"), inherit.aes = FALSE, size = 3) +
+  geom_point(data = mean_counts, aes(x = Sample, y = log10(MeanCounts), color = "Mean"), 
+             inherit.aes = FALSE, size = 3) +
   scale_fill_manual(values = c("tan2", "steelblue3"), labels = c("Replicate 1", "Replicate 2")) +
   scale_color_manual(values = c("Mean" = "black"), labels = c("Mean")) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.title = element_blank()) +
-  labs(x = "Sample", y = "Filtered Reads Counts")
-
-
+  scale_y_continuous(breaks = log10(c(1, 10, 100, 1000, 10000, 100000)), 
+                     labels = c("1", "10", "100", "1000", "10000", "100000")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, colour = "black"),
+        axis.text.y = element_text(colour = "black"),
+        legend.title = element_blank()) +
+  labs(x = "Probe-pair", y = "Filtered Reads Counts")
 
 # Order the samples based on the counts from Replicate 1
 replicate2_order <- pcounts_long %>%
