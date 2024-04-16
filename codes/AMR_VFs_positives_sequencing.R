@@ -322,9 +322,12 @@ ggplot(pcounts_long, aes(x = Sample, y = log10(Counts), fill = Replicate)) +
   scale_color_manual(values = c("Mean" = "black"), labels = c("Mean")) +
   scale_y_continuous(breaks = log10(c(1, 10, 100, 1000, 10000, 100000)), 
                      labels = c("1", "10", "100", "1000", "10000", "100000")) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, colour = "black"),
-        axis.text.y = element_text(colour = "black"),
-        legend.title = element_blank()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, colour = "black", size=8.5),
+        axis.text.y = element_text(colour = "black", size=12),
+        axis.title.x = element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 14)) +
   labs(x = "Probe-pair", y = "Filtered Reads Counts")
 
 # Order the samples based on the counts from Replicate 1
