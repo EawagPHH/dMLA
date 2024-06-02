@@ -10,6 +10,7 @@ library(seqinr)
 ##Formatting df------
 #Import results
 setwd("~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data")
+setwd("~/Desktop/dmla-amr-vfs/data")
 reads1 <- read.csv("20240228_sequencing_targets_all_tube1.csv", header = TRUE)
 reads1
 
