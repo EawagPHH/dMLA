@@ -105,11 +105,8 @@ ggplot(complete(reads, X2, Sample_real), aes(X2,Sample_real, fill= real_n))+
 #unique colour - presence/absence
 all=ggplot(complete(reads, X2, Sample_real), aes(X2, Sample_real)) +
   geom_tile(aes(fill = ifelse(is.na(real_n), "gray95", "black")), colour = "white") +
-<<<<<<< HEAD
   labs(title="All positive", x = "Target genes", y = "Sample") +
-=======
   labs(title="Multiplex-testing on E. coli - All positive", x = "Target genes", y = "Sample") +
->>>>>>> 1ccb192b2242456c1d62987466e7c8da01d50b9f
   scale_fill_manual(values = c(gray95 = "gray95", black = "black"), guide = "none") +
   theme(axis.text.x = element_text(size = 8, angle = 90), axis.text.y = element_text(size = 5))
 
