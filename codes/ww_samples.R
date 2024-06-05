@@ -10,28 +10,27 @@ library(seqinr)
 ##Formatting df------
 #Import results
 setwd("~/Desktop/dmla-amr-vfs/data")
-reads <- read.csv("bangladesh_output.csv", header = TRUE)
+reads <- read.csv("ww_output.csv", header = TRUE)
 reads
 
 reads <- reads %>% 
   mutate(Sample_real = as.character(X1)) %>% 
   mutate(Sample_real = case_when(
-    Sample_real == "CCACTAG" ~ "HH03C_1",
-    Sample_real == "GTCTTCT" ~ "HH03CH_1",Sample_real == "ACAAAGC" ~ "HH03H_1",Sample_real == "AAAAGGC" ~ "HH03S_1",Sample_real == "ACTGTGT" ~ "HH08C_1", Sample_real == "CTGGTAC" ~ "HH08CH_1",
-    Sample_real == "GTTGCTA" ~ "HH08H_1", Sample_real == "CCATTCA" ~ "zNegative_1",Sample_real == "GATATCG" ~ "HH13C_1",Sample_real == "ACAGGAT" ~ "HH13CH_1",Sample_real == "CGCATAC" ~ "HH13H_1",
-    Sample_real == "GGACCTA" ~ "HH13S_1", Sample_real == "GAACTGA" ~ "HH14C_1", Sample_real == "AGTCGTG" ~ "HH14CH_1",Sample_real == "TTCCAGG" ~ "HH14H_1",Sample_real == "TAGAGCG" ~ "zNegative_2",
-    Sample_real == "AAACCCT" ~ "HH14S_1",Sample_real == "ATCCAGT" ~ "HH15C_1",Sample_real == "TCTTCGT" ~ "HH15CH_1",Sample_real == "GTGTCCT" ~ "HH15H_1",Sample_real == "CACAGAT" ~ "HH16C_1",
-    Sample_real == "ATAGAGC" ~ "HH16CH_1", Sample_real == "GGTCATG" ~ "HH16H_1", Sample_real == "CCATCTC" ~ "zNegative_3",Sample_real == "TATGCAG" ~ "HH16S_1",Sample_real == "AACCGCT" ~ "HH17C_1",
-    Sample_real == "TGACTCT" ~ "HH17CH_1",Sample_real == "AAGCACA" ~ "HH17H_1",Sample_real == "TGTGAAC" ~ "HH17S_1",Sample_real == "AACAGTG" ~ "HH18C_1",Sample_real == "GCCTATA" ~ "HH18CH_1",
-    Sample_real == "GTCCTCT" ~ "zNegative_4",Sample_real == "TAGAACG" ~ "HH18H_1",Sample_real == "TGGGTGA" ~ "HH18S_1", Sample_real == "ACACGTG" ~ "HH03C_2",Sample_real == "TGCCCAA" ~ "HH03CH_2",
-    Sample_real == "TCGTACA" ~ "HH03H_2", Sample_real == "AACCAAG" ~ "HH03S_2", Sample_real == "GTGCTAT" ~ "HH08C_2",Sample_real == "TCCTCAT" ~ "zNegative_5",Sample_real == "GTCGTAT" ~ "HH08CH_2",
-    Sample_real == "TCTGGAA" ~ "HH08H_2",Sample_real == "CAGTAGG" ~ "HH13C_2", Sample_real == "ACGTCAT" ~ "HH13CH_2",Sample_real == "ACGGAAC" ~ "HH13H_2",Sample_real == "CGGATGA" ~ "HH13S_2",
-    Sample_real == "CCGCATA" ~ "HH14C_2", Sample_real == "GTGAAGA" ~ "zNegative_6", Sample_real == "AACGTGT" ~ "HH14CH_2",Sample_real == "AGAAGAC" ~ "HH14H_2",Sample_real == "TGTAGGG" ~ "HH14S_2",
-    Sample_real == "AATGCCT" ~ "HH15C_2", Sample_real == "GCTTTCT" ~ "HH15CH_2", Sample_real == "CATGAAG" ~ "HH15H_2",Sample_real == "CGATCAC" ~ "HH16C_2",Sample_real == "TCGCGTT" ~ "zNegative_7",
-    Sample_real == "GATTGGC" ~ "HH16CH_2", Sample_real == "CATCGGT" ~ "HH16H_2", Sample_real == "CTTTCCA" ~ "HH16S_2",Sample_real == "ACCAGAT" ~ "HH17C_2",Sample_real == "GTGATAC" ~ "HH17CH_2",
-    Sample_real == "TGCATCC" ~ "HH17H_2", Sample_real == "TGCAAAC" ~ "HH17S_2", Sample_real == "GCAACGA" ~ "zNegative_8",Sample_real == "GCCATAC" ~ "HH18C_2",Sample_real == "TACCTTC" ~ "HH18CH_2",
-    Sample_real == "GAATCGA" ~ "HH18H_2", Sample_real == "CTACGTT" ~ "HH18S_2", Sample_real == "GTTTCGG" ~ "uidA160_1",Sample_real == "GCAAATG" ~ "uidA160_2",Sample_real == "CTGACAC" ~ "zPCRNeg_1",
-    Sample_real == "GCACTTT" ~ "zPCRNeg_2")) 
+    Sample_real == "CCACTAG" ~ "48_1",
+    Sample_real == "GTCTTCT" ~ "49_1",Sample_real == "ACAAAGC" ~ "50_1",Sample_real == "AAAAGGC" ~ "51_1",Sample_real == "ACTGTGT" ~ "52_1", Sample_real == "CTGGTAC" ~ "53_1",
+    Sample_real == "GTTGCTA" ~ "54_1", Sample_real == "CCATTCA" ~ "zNegative_1",Sample_real == "GATATCG" ~ "55_1",Sample_real == "ACAGGAT" ~ "56_1",Sample_real == "CGCATAC" ~ "57_1",
+    Sample_real == "GGACCTA" ~ "58_1", Sample_real == "GAACTGA" ~ "59_1", Sample_real == "AGTCGTG" ~ "60_1",Sample_real == "TTCCAGG" ~ "61_1",Sample_real == "TAGAGCG" ~ "zNegative_2",
+    Sample_real == "AAACCCT" ~ "62_1",Sample_real == "ATCCAGT" ~ "63_1",Sample_real == "TCTTCGT" ~ "64_1",Sample_real == "GTGTCCT" ~ "65_1",Sample_real == "CACAGAT" ~ "66_1",
+    Sample_real == "ATAGAGC" ~ "68_1", Sample_real == "GGTCATG" ~ "69_1", Sample_real == "CCATCTC" ~ "zNegative_3",Sample_real == "TATGCAG" ~ "70_1",Sample_real == "AACCGCT" ~ "71_1",
+    Sample_real == "TGACTCT" ~ "72_1",Sample_real == "AAGCACA" ~ "73_1",Sample_real == "TGTGAAC" ~ "75_1",Sample_real == "AACAGTG" ~ "76_1",Sample_real == "GCCTATA" ~ "77_1",
+    Sample_real == "GTCCTCT" ~ "zNegative_4",Sample_real == "TAGAACG" ~ "48_2",Sample_real == "TGGGTGA" ~ "49_2", Sample_real == "ACACGTG" ~ "50_2",Sample_real == "TGCCCAA" ~ "51_2",
+    Sample_real == "TCGTACA" ~ "52_2", Sample_real == "AACCAAG" ~ "53_2", Sample_real == "GTGCTAT" ~ "54_2",Sample_real == "TCCTCAT" ~ "zNegative_5",Sample_real == "GTCGTAT" ~ "55_2",
+    Sample_real == "TCTGGAA" ~ "56_2",Sample_real == "CAGTAGG" ~ "57_2", Sample_real == "ACGTCAT" ~ "58_2",Sample_real == "ACGGAAC" ~ "59_2",Sample_real == "CGGATGA" ~ "60_2",
+    Sample_real == "CCGCATA" ~ "61_2", Sample_real == "GTGAAGA" ~ "zNegative_6", Sample_real == "AACGTGT" ~ "62_2",Sample_real == "AGAAGAC" ~ "63_2",Sample_real == "TGTAGGG" ~ "64_2",
+    Sample_real == "AATGCCT" ~ "65_2", Sample_real == "GCTTTCT" ~ "66_2", Sample_real == "CATGAAG" ~ "68_2",Sample_real == "CGATCAC" ~ "69_2",Sample_real == "TCGCGTT" ~ "zNegative_7",
+    Sample_real == "GATTGGC" ~ "aggR11_1", Sample_real == "CATCGGT" ~ "71_2", Sample_real == "CTTTCCA" ~ "72_2",Sample_real == "ACCAGAT" ~ "73_2",Sample_real == "GTGATAC" ~ "75_2",
+    Sample_real == "TGCATCC" ~ "76_2", Sample_real == "TGCAAAC" ~ "77_2", Sample_real == "GCAACGA" ~ "zNegative_8",Sample_real == "GCCATAC" ~ "70_2",Sample_real == "TACCTTC" ~ "aggR11_2",
+    Sample_real == "GAATCGA" ~ "aaiC47_1", Sample_real == "CTACGTT" ~ "aaiC47_2", Sample_real == "GTTTCGG" ~ "zPCRNeg_1",Sample_real == "GCAAATG" ~ "zPCRNeg_2")) 
 
 #Distribution of reads------------------
 ##Filter of negative samples containing positive
@@ -43,13 +42,14 @@ negative_samples <- c("zNegative_1", "zNegative_2", "zNegative_3", "zNegative_4"
 # Filter the dataframe
 filtered_reads <- reads %>%
   filter(Sample_real %in% negative_samples |
-           (Sample_real %in% c("uidA160_1", "uidA160_2") & X2 != "uidA160"))
+           (Sample_real %in% c("aggR11_1", "aggR11_2") & X2 != "aggR11") |
+           (Sample_real %in% c("aaiC47_1", "aaiC47_2") & X2 != "aaiC47"))
 
 #Plot distribution of false positive for each target
 ggplot(filtered_reads, aes(x=n)) + 
   geom_histogram() +
   theme_minimal() +
-  labs(title="Distribution of of false positive read counts for each probe-pair - Bangladesh isolates",
+  labs(title="Distribution of of false positive read counts for each probe-pair - wastewater isolates",
        x="n",
        y="Frequency") +
   theme(legend.title = element_blank())+
