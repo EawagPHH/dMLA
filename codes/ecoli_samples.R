@@ -5,6 +5,7 @@ library(gridExtra)
 library(ggpubr)
 library(tidyr)
 library(seqinr)
+library(readr)
 
 #dMLA Bangladesh strains-------------------
 ##Formatting df---------
@@ -99,19 +100,6 @@ reads_with_threshold <- reads_with_threshold %>%
 reads <- reads_with_threshold
 reads[reads == 0] <- NA
 
-#<1000
-ggplot(complete(reads, X2, Sample_real), aes(X2, Sample_real)) +
-  geom_tile(aes(fill = case_when(
-    is.na(real_n) ~ "gray95",
-    real_n > 0 & real_n <= 1 ~ "red", 
-    real_n > 1 & real_n <= 100 ~ "darkorange",
-    real_n > 100 & real_n <= 1000 ~ "gold1",# Assuming you want to include 1 in the range
-    TRUE ~ "black"
-  )), colour = "white") +
-  labs(title = "Multiplex-testing on Bangladesh strains, wihtout considering PCR Neg 99.9", x = "Probe-pair", y = "Sample") +
-  scale_fill_manual(values = c("gray95" = "gray95", "black" = "black", "red" = "red", "darkorange"="darkorange", "gold1"="gold1"), guide = "none") +
-  theme(axis.text.x = element_text(size = 8, angle = 90), 
-        axis.text.y = element_text(size = 6.5))
 
 ##Import WGS results file-----
 wgs <- read.csv("wgs_results_bangladesh.csv", header = TRUE)
@@ -159,17 +147,17 @@ complete_reads <- complete_reads %>%
   ))
 
 # Generate the plot
-ggplot(complete_reads, aes(X2, Sample_real)) +
+set1=ggplot(complete_reads, aes(X2, Sample_real)) +
   geom_tile(aes(fill = fill_category), colour = "white") +
-  labs(title="Multiplex-testing on Bangladesh E. coli samples (99.9%)", x = "Target genes", y = "Sample") +
+  labs(title="Multiplex-testing on E. coli samples - set 1", x = "Probe-pair", y = "Sample") +
   scale_fill_manual(values = c(
     "True negative" = "gray95",
     "True positive" = "palegreen3",
     "False positive" = "khaki",
     "False negative" = "lightsalmon"
   )) +
-  theme(axis.text.x = element_text(size = 8, angle = 90),
-        axis.text.y = element_text(size = 5),
+  theme(axis.text.x = element_text(size = 5, angle = 45, color = "black", hjust = 1),
+        axis.text.y = element_text(size = 5,  color = "black", vjust = 0.5),
         legend.title = element_blank())
 
 ##Save the file-------
@@ -182,6 +170,36 @@ wgs_counts <- complete_reads %>%
 
 # Print the counts
 print(wgs_counts)
+
+##Duplicates analyses--------
+### Quantify correct probe detection among both duplicates-------
+complete_reads <- complete_reads %>%
+  mutate(wgs = replace_na(wgs, 't'))
+
+complete_reads <- complete_reads %>%
+  mutate(Sample_id = ifelse(grepl("^zNegative_", Sample_real), Sample_real, sub("_[12]$", "", Sample_real)))
+
+# Group by Sample_id and X2, and then summarize the data
+consistent_probes <- complete_reads %>%
+  group_by(Sample_id, X2) %>%
+  dplyr::summarize(consistent = n_distinct(wgs) == 1, .groups = 'drop')
+
+# Filter to keep only those rows where the outcome is consistent
+consistent_probes <- consistent_probes %>%
+  filter(consistent)
+
+# Count the number of consistent probes per Sample_id and calculate the percentage
+consistent_probes_count_set1 <- consistent_probes %>%
+  group_by(Sample_id) %>%
+  dplyr::summarize(
+    num_consistent_probes = n(),
+    percent_consistent_probes = (n() / 63) * 100,  # Assuming the total number of probes is 63
+    .groups = 'drop'
+  )
+# Print the result
+print(consistent_probes_count_set1)
+
+write.csv(consistent_probes_count_set1, "consistent_probes_count_set1.csv", row.names = F)
 
 #dMLA wastewater strains-------------------
 ##Formatting df------
@@ -245,7 +263,7 @@ results_threshold <- filtered_reads %>%
   mutate(
     shape_estimate = mean_data^2 / var_data,
     rate_estimate = mean_data / var_data,
-    quantile_99_9 = qgamma(0.99, shape = shape_estimate, rate = rate_estimate)
+    quantile_99_9 = qgamma(0.999, shape = shape_estimate, rate = rate_estimate)
   )
 
 # Calculate the maximum n value for each X2 in filtered_reads
@@ -276,24 +294,10 @@ reads_with_threshold <- reads_with_threshold %>%
 reads <- reads_with_threshold
 reads[reads == 0] <- NA
 
-#<1000
-ggplot(complete(reads, X2, Sample_real), aes(X2, Sample_real)) +
-  geom_tile(aes(fill = case_when(
-    is.na(real_n) ~ "gray95",
-    real_n > 0 & real_n <= 1 ~ "red", 
-    real_n > 1 & real_n <= 100 ~ "darkorange",
-    real_n > 100 & real_n <= 1000 ~ "gold1",# Assuming you want to include 1 in the range
-    TRUE ~ "black"
-  )), colour = "white") +
-  labs(title = "Multiplex-testing on wastewater strains, wihtout considering PCR Neg 99.9", x = "Probe-pair", y = "Sample") +
-  scale_fill_manual(values = c("gray95" = "gray95", "black" = "black", "red" = "red", "darkorange"="darkorange", "gold1"="gold1"), guide = "none") +
-  theme(axis.text.x = element_text(size = 8, angle = 90), 
-        axis.text.y = element_text(size = 6.5))
-
 ##Import WGS results file-----
 # Load the BLAST results
 #blast_results <- read_delim("wgs_results_wastewater.out", delim = "\t", 
-# col_names = c("qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"))
+ #col_names = c("qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"))
 
 # Filter results to retain hits with percent identity > 95%
 #filtered_blast_results <- blast_results %>%
@@ -302,6 +306,11 @@ ggplot(complete(reads, X2, Sample_real), aes(X2, Sample_real)) +
 #Save the file
 #write.csv(filtered_blast_results, "wgs_results_wastewater.csv", row.names = F)
 #adjusted names of probes and of isolates according to name of probes and isolates in dMLA results
+
+##Import WGS results file-----
+# Load the BLAST results < 95%
+blast_results_all <- read_delim("~/Documents/dMLA_assemblies/Wastewater/results_no_perc_iden.out", delim = "\t", 
+                            col_names = c("qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"))
 
 ##Import WGS results file-----
 wgs <- read.csv("wgs_results_wastewater.csv", header = TRUE)
@@ -353,21 +362,23 @@ complete_reads <- complete_reads %>%
   ))
 
 # Generate the plot
-ggplot(complete_reads, aes(X2, Sample_real)) +
+set2=ggplot(complete_reads, aes(X2, Sample_real)) +
   geom_tile(aes(fill = fill_category), colour = "white") +
-  labs(title="Multiplex-testing on wastewater E. coli samples (99%)", x = "Target genes", y = "Sample") +
+  labs(title="Multiplex-testing on E. coli samples - set 2", x = "Probe-pair", y = "Sample") +
   scale_fill_manual(values = c(
     "True negative" = "gray95",
     "True positive" = "palegreen3",
     "False positive" = "khaki",
     "False negative" = "lightsalmon"
   )) +
-  theme(axis.text.x = element_text(size = 8, angle = 90),
-        axis.text.y = element_text(size = 5),
+  theme(axis.text.x = element_text(size = 5, angle = 45, color = "black", hjust = 1),
+        axis.text.y = element_text(size = 5,  color = "black", vjust = 0.51),
         legend.title = element_blank())
 
+ggarrange(set1, set2, ncol=2, labels=c("A", "B"), common.legend = TRUE, legend = "bottom")
+
 ##Save the file-------
-write.csv(reads, "wastewater_real_n_wgs.csv", row.names = F) 
+#write.csv(reads, "wastewater_real_n_wgs.csv", row.names = F) 
 
 ##Count number of true/false positives/negatives---------
 wgs_counts <- complete_reads %>%
@@ -376,3 +387,33 @@ wgs_counts <- complete_reads %>%
 
 # Print the counts
 print(wgs_counts)
+
+##Duplicates analyses--------
+### Quantify correct probe detection among both duplicates-------
+complete_reads <- complete_reads %>%
+  mutate(wgs = replace_na(wgs, 't'))
+
+complete_reads <- complete_reads %>%
+  mutate(Sample_id = ifelse(grepl("^zNegative_", Sample_real), Sample_real, sub("_[12]$", "", Sample_real)))
+
+# Group by Sample_id and X2, and then summarize the data
+consistent_probes <- complete_reads %>%
+  group_by(Sample_id, X2) %>%
+  dplyr::summarize(consistent = n_distinct(wgs) == 1, .groups = 'drop')
+
+# Filter to keep only those rows where the outcome is consistent
+consistent_probes <- consistent_probes %>%
+  filter(consistent)
+
+# Count the number of consistent probes per Sample_id and calculate the percentage
+consistent_probes_count_set2 <- consistent_probes %>%
+  group_by(Sample_id) %>%
+  dplyr::summarize(
+    num_consistent_probes = n(),
+    percent_consistent_probes = (n() / 63) * 100,  # Assuming the total number of probes is 63
+    .groups = 'drop'
+  )
+# Print the result
+print(consistent_probes_count_set2)
+
+write.csv(consistent_probes_count_set2, "consistent_probes_count_set2.csv", row.names = F) 
