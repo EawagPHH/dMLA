@@ -388,7 +388,7 @@ wgs_counts <- complete_reads %>%
 # Print the counts
 print(wgs_counts)
 
-##Duplicates analyses--------
+#Duplicates analyses--------
 ### Quantify correct probe detection among both duplicates-------
 complete_reads <- complete_reads %>%
   mutate(wgs = replace_na(wgs, 't'))
@@ -417,3 +417,38 @@ consistent_probes_count_set2 <- consistent_probes %>%
 print(consistent_probes_count_set2)
 
 write.csv(consistent_probes_count_set2, "consistent_probes_count_set2.csv", row.names = F) 
+
+#Plot single figure------------------
+#Import dataset
+setwd("~/Desktop/dmla-amr-vfs/data")
+setwd("~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data")
+reads_merged <- read.csv("ecoli_merged.csv", header = TRUE)
+reads_merged
+
+# Ensure complete combinations of X2 and Sample_real
+complete_reads <- complete(reads_merged, X2, Sample_real)
+
+# Create a new column for the fill categories
+complete_reads <- complete_reads %>%
+  mutate(fill_category = case_when(
+    is.na(real_n) & wgs == "t" ~ "True negative",
+    real_n > 0 & wgs == "y" ~ "True positive",
+    real_n > 0 & wgs == "n" ~ "False positive",
+    is.na(real_n) & wgs == "f" ~ "False negative",
+    TRUE ~ "True negative"
+  ))
+
+# Generate the plot
+ggplot(complete_reads, aes(X2, Sample_real)) +
+  geom_tile(aes(fill = fill_category), colour = "white") +
+  labs(title="Multiplex-testing on E. coli samples", x = "Detected probe-pair (target gene)", y = "DNA Sample") +
+  scale_fill_manual(values = c(
+    "True negative" = "gray95",
+    "True positive" = "palegreen3",
+    "False positive" = "khaki",
+    "False negative" = "lightsalmon"
+  )) +
+  theme(axis.text.x = element_text(size = 5, angle = 45, color = "black", hjust = 1),
+        axis.text.y = element_text(size = 5,  color = "black", vjust = 0.5),
+        legend.title = element_blank())
+
