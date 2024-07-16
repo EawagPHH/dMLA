@@ -8,9 +8,10 @@ library(tidyr)
 library(seqinr)
 
 setwd("~/Desktop/dmla-amr-vfs/data")
+
 ##Replicate 1----------
 #Import results
-reads1 <- read.csv("positive_output_tube1.csv", header = TRUE)
+reads1 <- read.csv("01_positive_output_tube1.csv", header = TRUE)
 reads1
 
 #Format df
@@ -135,7 +136,7 @@ r1=ggplot(complete(reads1, X2, Sample_real), aes(X2, Sample_real, fill = log10(r
 #write.csv(reads1, "~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data/adjusted_reads1.csv")
 
 ##Replicate 2-----------
-reads2 <- read.csv("positive_output_tube2.csv", header = TRUE)
+reads2 <- read.csv("01_positive_output_tube2.csv", header = TRUE)
 reads2
 
 #Format df
