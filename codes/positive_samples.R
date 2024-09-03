@@ -1,4 +1,4 @@
-#dMLA Positive Templates-------------------
+#dMLA positive Templates-------------------
 ##Load packages--------
 library (ggplot2)
 library(dplyr)
@@ -7,11 +7,11 @@ library(ggpubr)
 library(tidyr)
 library(seqinr)
 
-setwd("~/Desktop/dmla-amr-vfs/data")
+setwd("~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data")
 
 ##Replicate 1----------
 #Import results
-reads1 <- read.csv("01_positive_output_tube1.csv", header = TRUE)
+reads1 <- read.csv("positive_output_tube1.csv", header = TRUE)
 reads1
 
 #Format df
@@ -67,7 +67,7 @@ filtered_reads1 <- reads1 %>%
 ggplot(filtered_reads1, aes(x=n)) + 
   geom_histogram() +
   theme_minimal() +
-  labs(title="Distribution of of false positive read counts for each probe-pair",
+  labs(title="Distribution of of false positive read counts for each probe-pair - Replicate 1",
        x="n",
        y="Frequency") +
   theme(legend.title = element_blank())+
@@ -133,10 +133,10 @@ r1=ggplot(complete(reads1, X2, Sample_real), aes(X2, Sample_real, fill = log10(r
         axis.title.y = element_text(size=12),
         title=element_text(size=13))
 
-#write.csv(reads1, "~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data/adjusted_reads1.csv")
+#write.csv(reads1, "positive_adjusted_tube1.csv")
 
 ##Replicate 2-----------
-reads2 <- read.csv("01_positive_output_tube2.csv", header = TRUE)
+reads2 <- read.csv("positive_output_tube2.csv", header = TRUE)
 reads2
 
 #Format df
@@ -191,7 +191,7 @@ filtered_reads2 <- reads2 %>%
 ggplot(filtered_reads2, aes(x=n)) + 
   geom_histogram() +
   theme_minimal() +
-  labs(title="Distribution of of false positive read counts for each probe-pair",
+  labs(title="Distribution of of false positive read counts for each probe-pair - Replicate 2",
        x="n",
        y="Frequency") +
   theme(legend.title = element_blank())+
@@ -260,15 +260,15 @@ r2=ggplot(complete(reads2, X2, Sample_real), aes(X2, Sample_real, fill = log10(r
         axis.title.y = element_text(size=12),
         title=element_text(size=13))
 
-#write.csv(reads2, "~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data/adjusted_reads2.csv")
+#write.csv(reads2, "positive_adjusted_tube2.csv")
 
 
 ggarrange(r1a, r2a,r1, r2, ncol=2, nrow=2, labels=c("A", "B", "C", "D"), common.legend = TRUE, legend = "right")
 
-##Adjusted reads counts of positive
+##Adjusted reads counts of positive------------
+#This allows to generate Figure S2
 #Import results
-setwd("~/switchdrive/Institution/Manuscripts/02_dMLA/tables")
-pcounts <- read.csv("20240415_adjusted_reads_positive.csv", header = TRUE)
+pcounts <- read.csv("positive_adjusted_merged.csv", header = TRUE)
 pcounts
 
 # Reshape the data to long format
@@ -306,27 +306,4 @@ ggplot(pcounts_long, aes(x = Sample, y = log10(Counts), fill = Replicate)) +
         legend.title = element_blank(),
         legend.text = element_text(size = 14)) +
   labs(x = "Probe-pair", y = "Filtered Reads Counts")
-
-# Order the samples based on the counts from Replicate 1
-replicate2_order <- pcounts_long %>%
-  filter(Replicate == "replicate.2") %>%  # Adjust this if your column values are different
-  arrange(desc(Counts)) %>%
-  pull(Sample)
-
-# Step 2: Convert 'Sample' into a factor with levels ordered as desired
-pcounts_long$Sample <- factor(pcounts_long$Sample, levels = replicate2_order)
-
-
-ggplot(pcounts_long, aes(x = Sample, y = Counts, fill = Replicate)) +
-  geom_bar(stat = "identity", position = position_dodge()) +
-  scale_fill_manual(values = c("orange", "blue"), 
-                    labels = c("Replicate 1", "Replicate 2")) + # Modify legend labels here
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),  # Rotate x-axis labels for better visibility
-        legend.title = element_blank()) +  # Optional: remove legend title if desired
-  labs(x = "Sample", y = "Adjusted Reads Counts")
-
-
-
-
-
 
