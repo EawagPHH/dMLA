@@ -7,11 +7,11 @@ library(tidyr)
 library(seqinr)
 library(readr)
 
-#dMLA Bangladesh strains-------------------
+#dMLA ecoli_set1 strains-------------------
 ##Formatting df---------
 #Import results
-setwd("~/Desktop/dmla-amr-vfs/data")
-reads <- read.csv("bangladesh_output.csv", header = TRUE)
+setwd("~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data")
+reads <- read.csv("ecoli_set1_output.csv", header = TRUE)
 reads
 
 reads <- reads %>% 
@@ -50,7 +50,7 @@ filtered_reads <- reads %>%
 ggplot(filtered_reads, aes(x=n)) + 
   geom_histogram() +
   theme_minimal() +
-  labs(title="Distribution of of false positive read counts for each probe-pair - Bangladesh isolates",
+  labs(title="Distribution of of false positive read counts for each probe-pair - Set 1 E. coli isolates",
        x="n",
        y="Frequency") +
   theme(legend.title = element_blank())+
@@ -100,9 +100,8 @@ reads_with_threshold <- reads_with_threshold %>%
 reads <- reads_with_threshold
 reads[reads == 0] <- NA
 
-
 ##Import WGS results file-----
-wgs <- read.csv("wgs_results_bangladesh.csv", header = TRUE)
+wgs <- read.csv("wgs_results_ecoli_set1.csv", header = TRUE)
 
 # Remove the _1 and _2 suffixes from Sample_real in reads for comparison
 reads <- reads %>%
@@ -161,7 +160,7 @@ set1=ggplot(complete_reads, aes(X2, Sample_real)) +
         legend.title = element_blank())
 
 ##Save the file-------
-#write.csv(reads, "bangladesh_real_n_wgs.csv", row.names = F) 
+#write.csv(reads, "ecoli_set1_real_n_wgs.csv", row.names = F) 
 
 ##Count number of true/false positives/negatives---------
 wgs_counts <- complete_reads %>%
@@ -199,13 +198,13 @@ consistent_probes_count_set1 <- consistent_probes %>%
 # Print the result
 print(consistent_probes_count_set1)
 
-write.csv(consistent_probes_count_set1, "consistent_probes_count_set1.csv", row.names = F)
+#write.csv(consistent_probes_count_set1, "consistent_probes_count_set1.csv", row.names = F)
 
-#dMLA wastewater strains-------------------
+#dMLA ecoli_set2 strains-------------------
 ##Formatting df------
 #Import results
-setwd("~/Desktop/dmla-amr-vfs/data")
-reads <- read.csv("ww_output.csv", header = TRUE)
+setwd("~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data")
+reads <- read.csv("ecoli_set2_output.csv", header = TRUE)
 reads
 
 reads <- reads %>% 
@@ -244,7 +243,7 @@ filtered_reads <- reads %>%
 ggplot(filtered_reads, aes(x=n)) + 
   geom_histogram() +
   theme_minimal() +
-  labs(title="Distribution of of false positive read counts for each probe-pair - wastewater isolates",
+  labs(title="Distribution of of false positive read counts for each probe-pair - Set 2 E. coli isolates",
        x="n",
        y="Frequency") +
   theme(legend.title = element_blank())+
@@ -295,25 +294,7 @@ reads <- reads_with_threshold
 reads[reads == 0] <- NA
 
 ##Import WGS results file-----
-# Load the BLAST results
-#blast_results <- read_delim("wgs_results_wastewater.out", delim = "\t", 
- #col_names = c("qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"))
-
-# Filter results to retain hits with percent identity > 95%
-#filtered_blast_results <- blast_results %>%
-#filter(pident > 95)
-
-#Save the file
-#write.csv(filtered_blast_results, "wgs_results_wastewater.csv", row.names = F)
-#adjusted names of probes and of isolates according to name of probes and isolates in dMLA results
-
-##Import WGS results file-----
-# Load the BLAST results < 95%
-blast_results_all <- read_delim("~/Documents/dMLA_assemblies/Wastewater/results_no_perc_iden.out", delim = "\t", 
-                            col_names = c("qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"))
-
-##Import WGS results file-----
-wgs <- read.csv("wgs_results_wastewater.csv", header = TRUE)
+wgs <- read.csv("wgs_results_ecoli_set2.csv", header = TRUE)
 wgs$isolate=as.character(wgs$isolate)
 
 # Remove the _1 and _2 suffixes from Sample_real in reads for comparison
@@ -378,7 +359,7 @@ set2=ggplot(complete_reads, aes(X2, Sample_real)) +
 ggarrange(set1, set2, ncol=2, labels=c("A", "B"), common.legend = TRUE, legend = "bottom")
 
 ##Save the file-------
-#write.csv(reads, "wastewater_real_n_wgs.csv", row.names = F) 
+#write.csv(reads, "ecoli_set2_real_n_wgs.csv", row.names = F) 
 
 ##Count number of true/false positives/negatives---------
 wgs_counts <- complete_reads %>%
@@ -416,11 +397,10 @@ consistent_probes_count_set2 <- consistent_probes %>%
 # Print the result
 print(consistent_probes_count_set2)
 
-write.csv(consistent_probes_count_set2, "consistent_probes_count_set2.csv", row.names = F) 
+#write.csv(consistent_probes_count_set2, "consistent_probes_count_set2.csv", row.names = F) 
 
 #Plot single figure------------------
 #Import dataset
-setwd("~/Desktop/dmla-amr-vfs/data")
 setwd("~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data")
 reads_merged <- read.csv("ecoli_merged.csv", header = TRUE)
 reads_merged
