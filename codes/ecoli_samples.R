@@ -401,8 +401,8 @@ print(consistent_probes_count_set2)
 
 #Plot single figure------------------
 #Import dataset
-setwd("~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data")
-reads_merged <- read.csv("ecoli_merged.csv", header = TRUE)
+setwd("~/switchdrive/Institution/09_Manuscripts/02_dMLA/dmla-amr-vfs/data")
+reads_merged <- read.csv("ecoli_merged_v2.csv", header = TRUE)
 reads_merged
 
 # Ensure complete combinations of X2 and Sample_real
@@ -428,7 +428,7 @@ ggplot(complete_reads, aes(X2, Sample_real)) +
     "False positive" = "khaki",
     "False negative" = "lightsalmon"
   )) +
-  theme(axis.text.x = element_text(size = 5, angle = 45, color = "black", hjust = 1),
-        axis.text.y = element_text(size = 5,  color = "black", vjust = 0.5),
+  theme(axis.text.x = element_text(size = 7, angle = 45, color = "black", hjust = 1),
+        axis.text.y = element_text(size = 6,color = "black", vjust = 0.5),
         legend.title = element_blank())
 
