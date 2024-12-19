@@ -453,10 +453,12 @@ filtered_reads <- reads %>%
 ggplot(filtered_reads, aes(x=n)) + 
   geom_histogram() +
   theme_minimal() +
-  labs(title="Distribution of of false positive read counts for each probe-pair - Non-E. coli isolates",
-       x="n",
+  labs(title="Distribution of of false positive UMIs for each probe-pair across 50 negative controls",
+       x="Number of false positive UMIs",
        y="Frequency") +
-  theme(legend.title = element_blank())+
+  theme(axis.text.x = element_text(size = 7, angle = 45, color = "black", hjust = 1),
+        axis.text.y = element_text(size = 7,  color = "black", vjust = 0.5),
+        legend.title = element_blank())+
   facet_wrap(X2 ~ ., ncol = 10, scales="free")
 
 ##Threshold calculation------------------
@@ -571,17 +573,17 @@ complete_reads <- complete_reads %>%
   ))
 
 # Generate the plot
-set1=ggplot(complete_reads, aes(X2, Sample_real)) +
+reaction3=ggplot(complete_reads, aes(X2, Sample_real)) +
   geom_tile(aes(fill = fill_category), colour = "white") +
-  labs(title="Multiplex-testing on non-E. coli samples", x = "Probe-pair", y = "Sample") +
+  labs(title="Multiplex testing on non-E. coli samples - Reaction 3", x = "Probe-pair", y = "Sample") +
   scale_fill_manual(values = c(
     "True negative" = "gray95",
     "True positive" = "palegreen3",
     "False positive" = "khaki",
     "False negative" = "lightsalmon"
   )) +
-  theme(axis.text.x = element_text(size = 5, angle = 45, color = "black", hjust = 1),
-        axis.text.y = element_text(size = 5,  color = "black", vjust = 0.5),
+  theme(axis.text.x = element_text(size = 7, angle = 45, color = "black", hjust = 1),
+        axis.text.y = element_text(size = 7,  color = "black", vjust = 0.5),
         legend.title = element_blank())
 
 
