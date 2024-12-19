@@ -7,11 +7,11 @@ library(tidyr)
 library(seqinr)
 library(readr)
 
-#dMLA ecoli_set1 strains-------------------
+#dMLA ecoli_reaction1 strains-------------------
 ##Formatting df---------
 #Import results
-setwd("~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data")
-reads <- read.csv("ecoli_set1_output.csv", header = TRUE)
+setwd("~/switchdrive/Institution/09_Manuscripts/02_dMLA/dmla-amr-vfs/data")
+reads <- read.csv("ecoli_reaction1_output.csv", header = TRUE)
 reads
 
 reads <- reads %>% 
@@ -101,7 +101,7 @@ reads <- reads_with_threshold
 reads[reads == 0] <- NA
 
 ##Import WGS results file-----
-wgs <- read.csv("wgs_results_ecoli_set1.csv", header = TRUE)
+wgs <- read.csv("wgs_results_ecoli_reaction1.csv", header = TRUE)
 
 # Remove the _1 and _2 suffixes from Sample_real in reads for comparison
 reads <- reads %>%
@@ -146,7 +146,7 @@ complete_reads <- complete_reads %>%
   ))
 
 # Generate the plot
-set1=ggplot(complete_reads, aes(X2, Sample_real)) +
+reaction1=ggplot(complete_reads, aes(X2, Sample_real)) +
   geom_tile(aes(fill = fill_category), colour = "white") +
   labs(title="Multiplex-testing on E. coli samples - set 1", x = "Probe-pair", y = "Sample") +
   scale_fill_manual(values = c(
@@ -160,7 +160,7 @@ set1=ggplot(complete_reads, aes(X2, Sample_real)) +
         legend.title = element_blank())
 
 ##Save the file-------
-#write.csv(reads, "ecoli_set1_real_n_wgs.csv", row.names = F) 
+#write.csv(reads, "ecoli_reaction1_real_n_wgs.csv", row.names = F) 
 
 ##Count number of true/false positives/negatives---------
 wgs_counts <- complete_reads %>%
@@ -188,7 +188,7 @@ consistent_probes <- consistent_probes %>%
   filter(consistent)
 
 # Count the number of consistent probes per Sample_id and calculate the percentage
-consistent_probes_count_set1 <- consistent_probes %>%
+consistent_probes_count_reaction1 <- consistent_probes %>%
   group_by(Sample_id) %>%
   dplyr::summarize(
     num_consistent_probes = n(),
@@ -196,15 +196,15 @@ consistent_probes_count_set1 <- consistent_probes %>%
     .groups = 'drop'
   )
 # Print the result
-print(consistent_probes_count_set1)
+print(consistent_probes_count_reaction1)
 
-#write.csv(consistent_probes_count_set1, "consistent_probes_count_set1.csv", row.names = F)
+#write.csv(consistent_probes_count_reaction1, "consistent_probes_count_reaction1.csv", row.names = F)
 
-#dMLA ecoli_set2 strains-------------------
+#dMLA ecoli_reaction2 strains-------------------
 ##Formatting df------
 #Import results
-setwd("~/switchdrive/Institution/Manuscripts/02_dMLA/dmla-amr-vfs/data")
-reads <- read.csv("ecoli_set2_output.csv", header = TRUE)
+setwd("~/switchdrive/Institution/09_Manuscripts/02_dMLA/dmla-amr-vfs/data")
+reads <- read.csv("ecoli_reaction2_output.csv", header = TRUE)
 reads
 
 reads <- reads %>% 
@@ -294,7 +294,7 @@ reads <- reads_with_threshold
 reads[reads == 0] <- NA
 
 ##Import WGS results file-----
-wgs <- read.csv("wgs_results_ecoli_set2.csv", header = TRUE)
+wgs <- read.csv("wgs_results_ecoli_reaction2.csv", header = TRUE)
 wgs$isolate=as.character(wgs$isolate)
 
 # Remove the _1 and _2 suffixes from Sample_real in reads for comparison
@@ -343,7 +343,7 @@ complete_reads <- complete_reads %>%
   ))
 
 # Generate the plot
-set2=ggplot(complete_reads, aes(X2, Sample_real)) +
+reaction2=ggplot(complete_reads, aes(X2, Sample_real)) +
   geom_tile(aes(fill = fill_category), colour = "white") +
   labs(title="Multiplex-testing on E. coli samples - set 2", x = "Probe-pair", y = "Sample") +
   scale_fill_manual(values = c(
@@ -356,10 +356,10 @@ set2=ggplot(complete_reads, aes(X2, Sample_real)) +
         axis.text.y = element_text(size = 5,  color = "black", vjust = 0.51),
         legend.title = element_blank())
 
-ggarrange(set1, set2, ncol=2, labels=c("A", "B"), common.legend = TRUE, legend = "bottom")
+ggarrange(reaction1, reaction2, ncol=2, labels=c("A", "B"), common.legend = TRUE, legend = "bottom")
 
 ##Save the file-------
-#write.csv(reads, "ecoli_set2_real_n_wgs.csv", row.names = F) 
+#write.csv(reads, "ecoli_reaction2_real_n_wgs.csv", row.names = F) 
 
 ##Count number of true/false positives/negatives---------
 wgs_counts <- complete_reads %>%
@@ -387,7 +387,7 @@ consistent_probes <- consistent_probes %>%
   filter(consistent)
 
 # Count the number of consistent probes per Sample_id and calculate the percentage
-consistent_probes_count_set2 <- consistent_probes %>%
+consistent_probes_count_reaction2 <- consistent_probes %>%
   group_by(Sample_id) %>%
   dplyr::summarize(
     num_consistent_probes = n(),
@@ -395,14 +395,243 @@ consistent_probes_count_set2 <- consistent_probes %>%
     .groups = 'drop'
   )
 # Print the result
-print(consistent_probes_count_set2)
+print(consistent_probes_count_reaction2)
 
-#write.csv(consistent_probes_count_set2, "consistent_probes_count_set2.csv", row.names = F) 
+#write.csv(consistent_probes_count_reaction2, "consistent_probes_count_reaction2.csv", row.names = F) 
+
+#dMLA non_ecoli_reaction3-------------------
+##Formatting df---------
+#Import results
+setwd("~/switchdrive/Institution/09_Manuscripts/02_dMLA/dmla-amr-vfs/data")
+reads <- read.csv("nonecoli_reaction3_output.csv", header = TRUE)
+reads
+
+reads <- reads %>% 
+  mutate(Sample_real = as.character(X1)) %>% 
+  mutate(Sample_real = case_when(
+    Sample_real == "450" ~ "aggR11_1",
+    Sample_real == "451" ~ "aggR11_2",Sample_real == "452" ~ "aaiC47_1",Sample_real == "453" ~ "aaiC47_2",Sample_real == "454" ~ "K_oxytoca_1", Sample_real == "455" ~ "K_oxytoca_2",
+    Sample_real == "456" ~ "S_enterica_1", Sample_real == "457" ~ "zNegative_1",Sample_real == "458" ~ "S_enterica_2",Sample_real == "459" ~ "V_cholera_1",Sample_real == "460" ~ "V_cholera_2",
+    Sample_real == "461" ~ "Kp_S100_1", Sample_real == "462" ~ "Kp_S100_2", Sample_real == "463" ~ "20231211_mrsa_alt1_1",Sample_real == "464" ~ "20231211_mrsa_alt1_2",Sample_real == "465" ~ "zNegative_2",
+    Sample_real == "466" ~ "20240108_mrsa_alt3_1",Sample_real == "467" ~ "20240108_mrsa_alt3_2",Sample_real == "468" ~ "P_lurida_1",Sample_real == "469" ~ "P_lurida_2",Sample_real == "470" ~ "Kp_R884_1",
+    Sample_real == "471" ~ "Kp_R884_2", Sample_real == "472" ~ "Ecoli70_1", Sample_real == "473" ~ "zNegative_3",Sample_real == "474" ~ "Ecoli70_2",Sample_real == "475" ~ "zNegative_4",
+    Sample_real == "476" ~ "zNegative_5",Sample_real == "477" ~ "zNegative_6",Sample_real == "478" ~ "zNegative_7",Sample_real == "479" ~ "zNegative_8",Sample_real == "480" ~ "zNegative_9",
+    Sample_real == "481" ~ "zNegative_10",Sample_real == "482" ~ "zNegative_11",Sample_real == "483" ~ "zNegative_12", Sample_real == "484" ~ "zNegative_13",Sample_real == "485" ~ "zNegative_14",
+    Sample_real == "486" ~ "zNegative_15", Sample_real == "487" ~ "zNegative_16", Sample_real == "488" ~ "zNegative_17",Sample_real == "489" ~ "zNegative_18",Sample_real == "490" ~ "zNegative_19",
+    Sample_real == "491" ~ "zNegative_20",Sample_real == "492" ~ "zNegative_21", Sample_real == "493" ~ "zNegative_22",Sample_real == "494" ~ "zNegative_23",Sample_real == "495" ~ "zNegative_24",
+    Sample_real == "496" ~ "zNegative_25", Sample_real == "497" ~ "zNegative_26", Sample_real == "498" ~ "zNegative_27",Sample_real == "499" ~ "zNegative_28",Sample_real == "500" ~ "zNegative_29",
+    Sample_real == "501" ~ "zNegative_30", Sample_real == "502" ~ "zNegative_31", Sample_real == "503" ~ "zNegative_32",Sample_real == "504" ~ "zNegative_33",Sample_real == "505" ~ "zNegative_34",
+    Sample_real == "506" ~ "zNegative_35", Sample_real == "507" ~ "zNegative_36", Sample_real == "508" ~ "zNegative_37",Sample_real == "509" ~ "zNegative_38",Sample_real == "510" ~ "zNegative_39",
+    Sample_real == "511" ~ "zNegative_40", Sample_real == "512" ~ "zNegative_41", Sample_real == "513" ~ "zNegative_42",Sample_real == "514" ~ "zNegative_43",Sample_real == "515" ~ "zNegative_44",
+    Sample_real == "516" ~ "zNegative_45", Sample_real == "517" ~ "zNegative_46", Sample_real == "518" ~ "zNegative_47",Sample_real == "519" ~ "zNegative_48",Sample_real == "520" ~ "zPCRNeg_1",
+    Sample_real == "521" ~ "zPCRNeg_2")) 
+
+##Distribution of reads------------------
+##Filter of negative samples containing positive
+# Define the list of negative samples
+negative_samples <- c("zNegative_1", "zNegative_2", "zNegative_3", "zNegative_4",
+                      "zNegative_5", "zNegative_6", "zNegative_7", "zNegative_8",
+                      "zNegative_9","zNegative_10","zNegative_11","zNegative_12",
+                      "zNegative_13","zNegative_14","zNegative_15","zNegative_16",
+                      "zNegative_17","zNegative_18","zNegative_19","zNegative_20",
+                      "zNegative_21","zNegative_22","zNegative_23","zNegative_24",
+                      "zNegative_25","zNegative_26","zNegative_27","zNegative_28",
+                      "zNegative_29","zNegative_30","zNegative_31","zNegative_32",
+                      "zNegative_33","zNegative_34","zNegative_35","zNegative_36",
+                      "zNegative_37","zNegative_38","zNegative_39","zNegative_40",
+                      "zNegative_41","zNegative_42","zNegative_43","zNegative_44",
+                      "zNegative_45","zNegative_46","zNegative_47","zNegative_48",
+                      "zPCRNeg_1", "zPCRNeg_2")
+
+# Filter the dataframe
+filtered_reads <- reads %>%
+  filter(Sample_real %in% negative_samples |
+           (Sample_real %in% c("aggR11_1", "aggR11_2") & X2 != "aggR11") |
+           (Sample_real %in% c("aaiC47_1", "aaiC47_1") & X2 != "aaiC47"))
+
+#Plot distribution of false positive for each target
+ggplot(filtered_reads, aes(x=n)) + 
+  geom_histogram() +
+  theme_minimal() +
+  labs(title="Distribution of of false positive read counts for each probe-pair - Non-E. coli isolates",
+       x="n",
+       y="Frequency") +
+  theme(legend.title = element_blank())+
+  facet_wrap(X2 ~ ., ncol = 10, scales="free")
+
+##Threshold calculation------------------
+#Calculate the 99.9% quantile of the gamma distribution of each the false positive for each target as threshold
+# Assuming 'filtered_reads' is your dataframe with columns 'n' and 'X2'
+results_threshold <- filtered_reads %>%
+  group_by(X2) %>%
+  dplyr::summarise(
+    mean_data = mean(n),
+    var_data = var(n),
+    .groups = 'drop'
+  ) %>%
+  mutate(
+    shape_estimate = mean_data^2 / var_data,
+    rate_estimate = mean_data / var_data,
+    quantile_99_9 = qgamma(0.999, shape = shape_estimate, rate = rate_estimate)
+  )
+
+# Calculate the maximum n value for each X2 in filtered_reads
+max_n_values <- filtered_reads %>%
+  group_by(X2) %>%
+  dplyr::summarise(max_n_in_negatives = max(n, na.rm = TRUE), .groups = 'drop')
+
+# Replace Inf or NA values in quantile_99_9 with the highest n value from filtered_reads
+results_threshold <- results_threshold %>%
+  left_join(max_n_values, by = "X2") %>%
+  mutate(
+    quantile_99_9 = ifelse(is.infinite(quantile_99_9) | is.na(quantile_99_9), max_n_in_negatives, quantile_99_9)
+  )
+
+# Join the quantile data with the original dataframe, set quantile_99_9 to 0 for missing values
+reads_with_threshold <- reads %>%
+  left_join(results_threshold %>% select(X2, quantile_99_9), by = "X2") %>%
+  mutate(quantile_99_9 = ifelse(is.na(quantile_99_9), 0, quantile_99_9))
+
+# Calculate the real count
+reads_with_threshold <- reads_with_threshold %>%
+  mutate(real_n = n - quantile_99_9)
+
+# Ensure real_n does not go below 0
+reads_with_threshold <- reads_with_threshold %>%
+  mutate(real_n = ifelse(real_n < 0, 0, real_n))
+
+reads <- reads_with_threshold
+reads[reads == 0] <- NA
+
+# Ensure complete combinations of X2 and Sample_real
+complete_reads <- complete(reads, X2, Sample_real)
+
+##Import WGS results file-----
+wgs <- read.csv("~/switchdrive/Institution/09_Manuscripts/02_dMLA/dmla-amr-vfs/data/wgs_results_non_ecoli_reaction3.csv", header = TRUE)
+
+# Remove the _1 and _2 suffixes from Sample_real in complete_reads for comparison
+complete_reads <- complete_reads %>%
+  mutate(Sample_real_clean = sub("_[12]$", "", Sample_real))
+
+# Create a new column in complete_reads called 'wgs' with the specified conditions
+complete_reads <- complete_reads %>%
+  rowwise() %>%
+  mutate(
+    wgs = case_when(
+      any(wgs$isolate == Sample_real_clean & wgs$probe == X2) & !is.na(real_n) ~ "y",   # Present in both with valid real_n
+      !any(wgs$isolate == Sample_real_clean & wgs$probe == X2) & !is.na(real_n) ~ "n",  # Not present in wgs but real_n is valid
+      any(wgs$isolate == Sample_real_clean & wgs$probe == X2) & is.na(real_n) ~ "f",   # Present in wgs but real_n is NA
+      !any(wgs$isolate == Sample_real_clean & wgs$probe == X2) & is.na(real_n) ~ "t"                                      # Not present in wgs and real_n is NA
+    )
+  ) %>%
+  ungroup() %>%
+  select(-Sample_real_clean)
+
+complete_reads <- complete_reads %>%
+  mutate(
+    wgs = case_when(
+      Sample_real == "aggR11_1" & X2 == "aggR11" ~ "y",
+      Sample_real == "aggR11_2" & X2 == "aggR11" ~ "y",
+      Sample_real == "aaiC47_1" & X2 == "aaiC47" ~ "y",
+      Sample_real == "aaiC47_2" & X2 == "aaiC47" ~ "y",
+      TRUE ~ wgs  # retain existing values for other rows
+    )
+  )
+
+complete_reads[complete_reads == 0] <- NA
+
+# Plot results of real_n only
+ggplot(complete_reads, aes(x = X2, y = Sample_real)) + 
+  geom_tile(aes(fill = ifelse(!is.na(real_n) & real_n > 0, "Yes", "No")), color = "white") +
+  scale_fill_manual(
+    values = c("Yes" = "pink", "No" = "grey90"),
+    na.value = "grey90"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 9, angle = 90, hjust = 1),
+    axis.text.y = element_text(size = 9),
+    legend.title = element_text(size = 10),
+    legend.text = element_text(size = 8)
+  ) +
+  labs(
+    x = "Probe-pair", 
+    y = "Sample",
+    fill = "Gene detected by dMLA"
+  )
+
+# Create a new column for the fill categories
+complete_reads <- complete_reads %>%
+  mutate(fill_category = case_when(
+    is.na(real_n) & wgs == "t" ~ "True negative",
+    real_n > 0 & wgs == "y" ~ "True positive",
+    real_n > 0 & wgs == "n" ~ "False positive",
+    is.na(real_n) & wgs == "f" ~ "False negative",
+    TRUE ~ "True negative"
+  ))
+
+# Generate the plot
+set1=ggplot(complete_reads, aes(X2, Sample_real)) +
+  geom_tile(aes(fill = fill_category), colour = "white") +
+  labs(title="Multiplex-testing on non-E. coli samples", x = "Probe-pair", y = "Sample") +
+  scale_fill_manual(values = c(
+    "True negative" = "gray95",
+    "True positive" = "palegreen3",
+    "False positive" = "khaki",
+    "False negative" = "lightsalmon"
+  )) +
+  theme(axis.text.x = element_text(size = 5, angle = 45, color = "black", hjust = 1),
+        axis.text.y = element_text(size = 5,  color = "black", vjust = 0.5),
+        legend.title = element_blank())
+
+
+##Save the file-------
+#write.csv(reads, "non-ecoli_real_n_wgs.csv", row.names = F) 
+
+##Count number of true/false positives/negatives---------
+wgs_counts <- complete_reads %>%
+  group_by(wgs) %>%
+  dplyr::summarise(count = n())
+
+# Print the counts
+print(wgs_counts)
+
+##Duplicates analyses--------
+### Quantify correct probe detection among both duplicates-------
+complete_reads <- complete_reads %>%
+  mutate(wgs = replace_na(wgs, 't'))
+
+complete_reads <- complete_reads %>%
+  mutate(Sample_id = ifelse(grepl("^zNegative_", Sample_real), Sample_real, sub("_[12]$", "", Sample_real)))
+
+#write.csv(complete_reads, "non-ecoli_true_and_false.csv", row.names = F) 
+
+# Group by Sample_id and X2, and then summarize the data
+consistent_probes <- complete_reads %>%
+  group_by(Sample_id, X2) %>%
+  dplyr::summarize(consistent = n_distinct(wgs) == 1, .groups = 'drop')
+
+# Filter to keep only those rows where the outcome is consistent
+consistent_probes <- consistent_probes %>%
+  filter(consistent)
+
+# Count the number of consistent probes per Sample_id and calculate the percentage
+consistent_probes_count_nonecoli <- consistent_probes %>%
+  group_by(Sample_id) %>%
+  dplyr::summarize(
+    num_consistent_probes = n(),
+    percent_consistent_probes = (n() / 63) * 100,  # Assuming the total number of probes is 63
+    .groups = 'drop'
+  )
+# Print the result
+print(consistent_probes_count_nonecoli)
+
+#write.csv(consistent_probes_count_nonecoli, "consistent_probes_count_nonecoli.csv", row.names = F)
 
 #Plot single figure------------------
 #Import dataset
 setwd("~/switchdrive/Institution/09_Manuscripts/02_dMLA/dmla-amr-vfs/data")
-reads_merged <- read.csv("ecoli_merged_v2.csv", header = TRUE)
+reads_merged <- read.csv("ecoli_merged.csv", header = TRUE)
 reads_merged
 
 # Ensure complete combinations of X2 and Sample_real
@@ -428,7 +657,7 @@ ggplot(complete_reads, aes(X2, Sample_real)) +
     "False positive" = "khaki",
     "False negative" = "lightsalmon"
   )) +
-  theme(axis.text.x = element_text(size = 7, angle = 45, color = "black", hjust = 1),
-        axis.text.y = element_text(size = 6,color = "black", vjust = 0.5),
+  theme(axis.text.x = element_text(size = 5, angle = 45, color = "black", hjust = 1),
+        axis.text.y = element_text(size = 5,color = "black", vjust = 0.5),
         legend.title = element_blank())
 
