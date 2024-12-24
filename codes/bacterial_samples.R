@@ -10,8 +10,8 @@ library(readr)
 #dMLA ecoli_reaction1 strains-------------------
 ##Formatting df---------
 #Import results
-setwd("~/switchdrive/Institution/09_Manuscripts/02_dMLA/dmla-amr-vfs/data")
-reads <- read.csv("ecoli_reaction1_output.csv", header = TRUE)
+setwd("../data")
+reads <- read.csv("bacteria_reaction1_output.csv", header = TRUE)
 reads
 
 reads <- reads %>% 
@@ -50,7 +50,7 @@ filtered_reads <- reads %>%
 ggplot(filtered_reads, aes(x=n)) + 
   geom_histogram() +
   theme_minimal() +
-  labs(title="Distribution of of false positive read counts for each probe-pair - Set 1 E. coli isolates",
+  labs(title="Distribution of of false positive read counts for each probe-pair - Reaction 1 bacterial isolates",
        x="n",
        y="Frequency") +
   theme(legend.title = element_blank())+
@@ -101,7 +101,7 @@ reads <- reads_with_threshold
 reads[reads == 0] <- NA
 
 ##Import WGS results file-----
-wgs <- read.csv("wgs_results_ecoli_reaction1.csv", header = TRUE)
+wgs <- read.csv("wgs_results_bacteria_reaction1.csv", header = TRUE)
 
 # Remove the _1 and _2 suffixes from Sample_real in reads for comparison
 reads <- reads %>%
@@ -148,7 +148,7 @@ complete_reads <- complete_reads %>%
 # Generate the plot
 reaction1=ggplot(complete_reads, aes(X2, Sample_real)) +
   geom_tile(aes(fill = fill_category), colour = "white") +
-  labs(title="Multiplex-testing on E. coli samples - set 1", x = "Probe-pair", y = "Sample") +
+  labs(title="Multiplex-testing on bacterial samples - reaction 1", x = "Probe-pair", y = "Sample") +
   scale_fill_manual(values = c(
     "True negative" = "gray95",
     "True positive" = "palegreen3",
@@ -160,7 +160,7 @@ reaction1=ggplot(complete_reads, aes(X2, Sample_real)) +
         legend.title = element_blank())
 
 ##Save the file-------
-#write.csv(reads, "ecoli_reaction1_real_n_wgs.csv", row.names = F) 
+write.csv(reads, "bacteria_reaction1_real_n_wgs.csv", row.names = F) 
 
 ##Count number of true/false positives/negatives---------
 wgs_counts <- complete_reads %>%
@@ -203,8 +203,8 @@ print(consistent_probes_count_reaction1)
 #dMLA ecoli_reaction2 strains-------------------
 ##Formatting df------
 #Import results
-setwd("~/switchdrive/Institution/09_Manuscripts/02_dMLA/dmla-amr-vfs/data")
-reads <- read.csv("ecoli_reaction2_output.csv", header = TRUE)
+setwd("../data")
+reads <- read.csv("bacteria_reaction2_output.csv", header = TRUE)
 reads
 
 reads <- reads %>% 
@@ -243,7 +243,7 @@ filtered_reads <- reads %>%
 ggplot(filtered_reads, aes(x=n)) + 
   geom_histogram() +
   theme_minimal() +
-  labs(title="Distribution of of false positive read counts for each probe-pair - Set 2 E. coli isolates",
+  labs(title="Distribution of of false positive read counts for each probe-pair - Reaction 2 bacterial isolates",
        x="n",
        y="Frequency") +
   theme(legend.title = element_blank())+
@@ -294,7 +294,7 @@ reads <- reads_with_threshold
 reads[reads == 0] <- NA
 
 ##Import WGS results file-----
-wgs <- read.csv("wgs_results_ecoli_reaction2.csv", header = TRUE)
+wgs <- read.csv("wgs_results_bacteria_reaction2.csv", header = TRUE)
 wgs$isolate=as.character(wgs$isolate)
 
 # Remove the _1 and _2 suffixes from Sample_real in reads for comparison
@@ -304,7 +304,7 @@ reads <- reads %>%
 # Create a new column in reads called 'wgs' with the specified conditions
 reads <- reads %>%
   rowwise() %>%
-  mutate(
+  dplyr::mutate(
     wgs = case_when(
       any(wgs$isolate == Sample_real_clean & wgs$probe == X2) & !is.na(real_n) ~ "y",   # Present in both with valid real_n
       !any(wgs$isolate == Sample_real_clean & wgs$probe == X2) & !is.na(real_n) ~ "n",  # Not present in wgs but real_n is valid
@@ -345,7 +345,7 @@ complete_reads <- complete_reads %>%
 # Generate the plot
 reaction2=ggplot(complete_reads, aes(X2, Sample_real)) +
   geom_tile(aes(fill = fill_category), colour = "white") +
-  labs(title="Multiplex-testing on E. coli samples - set 2", x = "Probe-pair", y = "Sample") +
+  labs(title="Multiplex-testing on bacterial samples - reaction 2", x = "Probe-pair", y = "Sample") +
   scale_fill_manual(values = c(
     "True negative" = "gray95",
     "True positive" = "palegreen3",
@@ -356,10 +356,8 @@ reaction2=ggplot(complete_reads, aes(X2, Sample_real)) +
         axis.text.y = element_text(size = 5,  color = "black", vjust = 0.51),
         legend.title = element_blank())
 
-ggarrange(reaction1, reaction2, ncol=2, labels=c("A", "B"), common.legend = TRUE, legend = "bottom")
-
 ##Save the file-------
-#write.csv(reads, "ecoli_reaction2_real_n_wgs.csv", row.names = F) 
+#write.csv(reads, "bacteria_reaction2_real_n_wgs.csv", row.names = F) 
 
 ##Count number of true/false positives/negatives---------
 wgs_counts <- complete_reads %>%
@@ -402,8 +400,8 @@ print(consistent_probes_count_reaction2)
 #dMLA non_ecoli_reaction3-------------------
 ##Formatting df---------
 #Import results
-setwd("~/switchdrive/Institution/09_Manuscripts/02_dMLA/dmla-amr-vfs/data")
-reads <- read.csv("nonecoli_reaction3_output.csv", header = TRUE)
+setwd("../data")
+reads <- read.csv("bacteria_reaction3_output.csv", header = TRUE)
 reads
 
 reads <- reads %>% 
@@ -509,7 +507,7 @@ reads[reads == 0] <- NA
 complete_reads <- complete(reads, X2, Sample_real)
 
 ##Import WGS results file-----
-wgs <- read.csv("~/switchdrive/Institution/09_Manuscripts/02_dMLA/dmla-amr-vfs/data/wgs_results_non_ecoli_reaction3.csv", header = TRUE)
+wgs <- read.csv("~/Desktop/dmla-amr-vfs/data/wgs_results_bacteria_reaction3.csv", header = TRUE)
 
 # Remove the _1 and _2 suffixes from Sample_real in complete_reads for comparison
 complete_reads <- complete_reads %>%
@@ -542,26 +540,6 @@ complete_reads <- complete_reads %>%
 
 complete_reads[complete_reads == 0] <- NA
 
-# Plot results of real_n only
-ggplot(complete_reads, aes(x = X2, y = Sample_real)) + 
-  geom_tile(aes(fill = ifelse(!is.na(real_n) & real_n > 0, "Yes", "No")), color = "white") +
-  scale_fill_manual(
-    values = c("Yes" = "pink", "No" = "grey90"),
-    na.value = "grey90"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(size = 9, angle = 90, hjust = 1),
-    axis.text.y = element_text(size = 9),
-    legend.title = element_text(size = 10),
-    legend.text = element_text(size = 8)
-  ) +
-  labs(
-    x = "Probe-pair", 
-    y = "Sample",
-    fill = "Gene detected by dMLA"
-  )
-
 # Create a new column for the fill categories
 complete_reads <- complete_reads %>%
   mutate(fill_category = case_when(
@@ -575,7 +553,7 @@ complete_reads <- complete_reads %>%
 # Generate the plot
 reaction3=ggplot(complete_reads, aes(X2, Sample_real)) +
   geom_tile(aes(fill = fill_category), colour = "white") +
-  labs(title="Multiplex testing on non-E. coli samples - Reaction 3", x = "Probe-pair", y = "Sample") +
+  labs(title="Multiplex testing on bacterial samples - Reaction 3", x = "Probe-pair", y = "Sample") +
   scale_fill_manual(values = c(
     "True negative" = "gray95",
     "True positive" = "palegreen3",
@@ -586,9 +564,10 @@ reaction3=ggplot(complete_reads, aes(X2, Sample_real)) +
         axis.text.y = element_text(size = 7,  color = "black", vjust = 0.5),
         legend.title = element_blank())
 
+ggarrange(reaction1, reaction2, reaction3, ncol=3, labels=c("A", "B", "C"), common.legend = TRUE, legend = "bottom")
 
 ##Save the file-------
-#write.csv(reads, "non-ecoli_real_n_wgs.csv", row.names = F) 
+#write.csv(reads, "bacteria_reaction3_real_n_wgs.csv", row.names = F) 
 
 ##Count number of true/false positives/negatives---------
 wgs_counts <- complete_reads %>%
@@ -606,8 +585,6 @@ complete_reads <- complete_reads %>%
 complete_reads <- complete_reads %>%
   mutate(Sample_id = ifelse(grepl("^zNegative_", Sample_real), Sample_real, sub("_[12]$", "", Sample_real)))
 
-#write.csv(complete_reads, "non-ecoli_true_and_false.csv", row.names = F) 
-
 # Group by Sample_id and X2, and then summarize the data
 consistent_probes <- complete_reads %>%
   group_by(Sample_id, X2) %>%
@@ -618,7 +595,7 @@ consistent_probes <- consistent_probes %>%
   filter(consistent)
 
 # Count the number of consistent probes per Sample_id and calculate the percentage
-consistent_probes_count_nonecoli <- consistent_probes %>%
+consistent_probes_count_reaction3 <- consistent_probes %>%
   group_by(Sample_id) %>%
   dplyr::summarize(
     num_consistent_probes = n(),
@@ -626,14 +603,14 @@ consistent_probes_count_nonecoli <- consistent_probes %>%
     .groups = 'drop'
   )
 # Print the result
-print(consistent_probes_count_nonecoli)
+print(consistent_probes_count_reaction3)
 
-#write.csv(consistent_probes_count_nonecoli, "consistent_probes_count_nonecoli.csv", row.names = F)
+#write.csv(consistent_probes_count_reaction3, "consistent_probes_count_reaction3.csv", row.names = F)
 
 #Plot single figure------------------
 #Import dataset
-setwd("~/switchdrive/Institution/09_Manuscripts/02_dMLA/dmla-amr-vfs/data")
-reads_merged <- read.csv("ecoli_merged.csv", header = TRUE)
+setwd("../data")
+reads_merged <- read.csv("bacteria_merged.csv", header = TRUE)
 reads_merged
 
 # Ensure complete combinations of X2 and Sample_real
@@ -652,7 +629,7 @@ complete_reads <- complete_reads %>%
 # Generate the plot
 ggplot(complete_reads, aes(X2, Sample_real)) +
   geom_tile(aes(fill = fill_category), colour = "white") +
-  labs(title="Multiplex-testing on E. coli samples", x = "Detected probe-pair (target gene)", y = "DNA Sample") +
+  labs(title="Multiplex-testing on bacterial samples", x = "Detected probe-pair (target gene)", y = "DNA Sample") +
   scale_fill_manual(values = c(
     "True negative" = "gray95",
     "True positive" = "palegreen3",

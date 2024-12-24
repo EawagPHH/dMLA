@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project involves analyzing multiplex assay performance on *E. coli* isolates and synthetic DNA templates using two R scripts: ```positive_samples.R``` for synthetic DNA templates and ```ecoli_samples.R ```for *E. coli* samples. The analysis includes data processing, threshold calculations for detecting true positives/negatives, and result visualization.
+This project involves analyzing multiplex assay performance on *E. coli* isolates and synthetic DNA templates using two R scripts: ```positive_samples.R``` for synthetic DNA templates and ```bacterial_samples.R ```for bacterial samples. The analysis includes data processing, threshold calculations for detecting true positives/negatives, and result visualization.
 
 ## Prerequisites
 
@@ -40,16 +40,18 @@ This script analyzes the read counts from two replicates of synthetic DNA templa
 + Adjusted read counts (e.g., ```positive_adjusted_tube1.csv```).
 + Plots comparing read counts before and after filtering, with aggregate analysis results.
 
-### 2. ```ecoli_samples.R``` - *E. coli* Samples
-This script analyzes multiplex assay performance on two sets of *E. coli* isolates.
+### 2. ```bacterial_samples.R``` - Bacterial Samples
+This script analyzes multiplex assay performance on 64 bacterial isolates in three distinct reactions.
 
 #### Data Files:
 
-+ ```ecoli_set1_output.csv```: Read counts for set 1.
-+ ```ecoli_set2_output.csv```: Read counts for set 2.
-+ ```wgs_results_ecoli_set1.csv```: Whole genome sequencing results for set 1.
-+ ```wgs_results_ecoli_set2.csv```: Whole genome sequencing results for set 2.
-+ ```ecoli_merged.csv```: Merged results for final visualization.
++ ```bacteria_reaction1_output.csv```: Read counts for reaction 1.
++ ```bacteria_reaction2_output.csv```: Read counts for reaction 2.
++ ```bacteria_reaction3_output.csv```: Read counts for reaction 3.
++ ```wgs_results_bacteria_reaction1.csv```: Whole genome sequencing results for reaction 1.
++ ```wgs_results_bacteria_reaction2.csv```: Whole genome sequencing results for reaction 2.
++ ```wgs_results_bacteria_reaction3.csv```: Whole genome sequencing results for reaction 3.
++ ```bacteria_merged.csv```: Merged results for final visualization.
 
 #### Workflow:
 
@@ -75,4 +77,4 @@ This script analyzes multiplex assay performance on two sets of *E. coli* isolat
 
 Uncomment the ```write.csv``` lines in the scripts to save processed data.
 
-This project provides a comprehensive analysis of multiplex assay results by filtering false positives and comparing to WGS data, aiding in the evaluation of assay accuracy and reliability.
+This project provides a comprehensive analysis of multiplex assay results by filtering false positives and comparing to WGS data, aiding in the evaluation of assay accuracy and reliability.../README.md
