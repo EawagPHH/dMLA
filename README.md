@@ -18,7 +18,13 @@ The analysis requires R and the following packages:
 
 ## Scripts and Data Files
 
-### 1. ```positive_samples.R``` - Synthetic DNA Templates
+### 1. ```reads_process.py```
+This script processes NGS reads in FASTQ format that have been merged using VSEARCH (v2.19.0). It generates unique molecular barcode counts or unique molecular identifier (UMI) counts by matching targets based on:
+
++ **Forward primer barcodes**: Identifies and matches the barcodes associated with the forward primers.
++ **Target probe-pairs**: Matches the corresponding probe-pairs to assign UMIs accurately.
+
+### 2. ```positive_samples.R``` - Synthetic DNA Templates
 This script analyzes the read counts from two replicates of synthetic DNA templates to distinguish true and false positives/negatives.
 
 #### Data Files:
@@ -40,7 +46,7 @@ This script analyzes the read counts from two replicates of synthetic DNA templa
 + Adjusted read counts (e.g., ```positive_adjusted_tube1.csv```).
 + Plots comparing read counts before and after filtering, with aggregate analysis results.
 
-### 2. ```bacterial_samples.R``` - Bacterial Samples
+### 3. ```bacterial_samples.R``` - Bacterial Samples
 This script analyzes multiplex assay performance on 64 bacterial isolates in three distinct reactions.
 
 #### Data Files:
